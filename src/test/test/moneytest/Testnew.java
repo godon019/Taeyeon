@@ -23,6 +23,7 @@ public class Testnew {
         assertFalse(Money.dollar(5).equals(Money.dollar(6)));
         assertFalse(Money.franc(5).equals(Money.dollar(5)));
 
+
     }
 
     @Test
