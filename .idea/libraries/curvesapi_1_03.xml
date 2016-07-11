@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="curvesapi-1.03">
+    <CLASSES>
+      <root url="jar://E:/LIBRARY/Desktop/작업/2016-06-28 태연이 프로그램/poi-bin-3.14/poi-3.14/ooxml-lib/curvesapi-1.03.jar!/" />
+      <root url="jar://E:/LIBRARY/Desktop/작업/2016-06-28 태연이 프로그램/poi-bin-3.14/poi-3.14/ooxml-lib/xmlbeans-2.6.0.jar!/" />
+      <root url="jar://E:/LIBRARY/Desktop/작업/2016-06-28 태연이 프로그램/poi-bin-3.14/poi-3.14/poi-3.14-20160307.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

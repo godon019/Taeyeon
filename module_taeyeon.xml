@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_taeyeon" default="compile.module.taeyeon">
+  <dirname property="module.taeyeon.basedir" file="${ant.file.module_taeyeon}"/>
+  
+  <property name="module.jdk.home.taeyeon" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.taeyeon" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.taeyeon" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.taeyeon" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="taeyeon.output.dir" value="${module.taeyeon.basedir}/out/production/Taeyeon"/>
+  <property name="taeyeon.testoutput.dir" value="${module.taeyeon.basedir}/out/test/Taeyeon"/>
+  
+  <path id="taeyeon.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="taeyeon.module.production.classpath">
+    <path refid="${module.jdk.classpath.taeyeon}"/>
+    <pathelement location="${idea.home}/plugins/testng/lib/jcommander.jar"/>
+    <pathelement location="${idea.home}/plugins/testng/lib/testng.jar"/>
+    <path refid="library.arquillian_junit:release.classpath"/>
+  </path>
+  
+  <path id="taeyeon.runtime.production.module.classpath">
+    <pathelement location="${taeyeon.output.dir}"/>
+    <pathelement location="${idea.home}/plugins/testng/lib/jcommander.jar"/>
+    <pathelement location="${idea.home}/plugins/testng/lib/testng.jar"/>
+    <path refid="library.arquillian_junit:release.classpath"/>
+  </path>
+  
+  <path id="taeyeon.module.classpath">
+    <path refid="${module.jdk.classpath.taeyeon}"/>
+    <pathelement location="${taeyeon.output.dir}"/>
+    <path refid="library.arquillian_junit:release.classpath"/>
+    <pathelement location="${idea.home}/plugins/testng/lib/jcommander.jar"/>
+    <pathelement location="${idea.home}/plugins/testng/lib/testng.jar"/>
+  </path>
+  
+  <path id="taeyeon.runtime.module.classpath">
+    <pathelement location="${taeyeon.testoutput.dir}"/>
+    <pathelement location="${taeyeon.output.dir}"/>
+    <path refid="library.arquillian_junit:release.classpath"/>
+    <pathelement location="${idea.home}/plugins/testng/lib/jcommander.jar"/>
+    <pathelement location="${idea.home}/plugins/testng/lib/testng.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.taeyeon">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.taeyeon">
+    <patternset refid="excluded.from.module.taeyeon"/>
+  </patternset>
+  
+  <path id="taeyeon.module.sourcepath">
+    <dirset dir="${module.taeyeon.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  <path id="taeyeon.module.test.sourcepath">
+    <dirset dir="${module.taeyeon.basedir}">
+      <include name="src/godon/test"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.taeyeon" depends="compile.module.taeyeon.production,compile.module.taeyeon.tests" description="Compile module Taeyeon"/>
+  
+  <target name="compile.module.taeyeon.production" depends="register.custom.compilers" description="Compile module Taeyeon; production classes">
+    <mkdir dir="${taeyeon.output.dir}"/>
+    <javac2 destdir="${taeyeon.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.taeyeon}/javac">
+      <compilerarg line="${compiler.args.taeyeon}"/>
+      <bootclasspath refid="taeyeon.module.bootclasspath"/>
+      <classpath refid="taeyeon.module.production.classpath"/>
+      <src refid="taeyeon.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.taeyeon"/>
+    </javac2>
+    
+    <copy todir="${taeyeon.output.dir}">
+      <fileset dir="${module.taeyeon.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.taeyeon.tests" depends="register.custom.compilers,compile.module.taeyeon.production" description="compile module Taeyeon; test classes" unless="skip.tests">
+    <mkdir dir="${taeyeon.testoutput.dir}"/>
+    <javac2 destdir="${taeyeon.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.taeyeon}/javac">
+      <compilerarg line="${compiler.args.taeyeon}"/>
+      <bootclasspath refid="taeyeon.module.bootclasspath"/>
+      <classpath refid="taeyeon.module.classpath"/>
+      <src refid="taeyeon.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.taeyeon"/>
+    </javac2>
+    
+    <copy todir="${taeyeon.testoutput.dir}">
+      <fileset dir="${module.taeyeon.basedir}/src/godon/test">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.taeyeon" description="cleanup module">
+    <delete dir="${taeyeon.output.dir}"/>
+    <delete dir="${taeyeon.testoutput.dir}"/>
+  </target>
+</project>
