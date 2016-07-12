@@ -20,8 +20,7 @@ public class Products {
         productArr.add(new Product("모델명", Product.IOType.READ_AND_WRITE));
         productArr.add(new Product("최저가", Product.IOType.READ_AND_WRITE));
         productArr.add(new Product("갱신된 최저가", Product.IOType.WRITE_ONLY));
-        productArr.add(new Product("가격 배열", Product.IOType.WRITE_ONLY));
-        productArr.add(new Product("링크 배열", Product.IOType.WRITE_ONLY));
+        productArr.add(new Product("로그", Product.IOType.WRITE_ONLY));
         try {
             setPrimitiveProduct("모델명");
         } catch (Exception e) {

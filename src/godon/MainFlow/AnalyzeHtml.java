@@ -30,20 +30,22 @@ public class AnalyzeHtml {
     static ArrayList<String> priceArr;
     static ArrayList<String> linkArr;
 
+    static StringBuilder log;
+
     public static Products getAnalyzedProducts(Products products) throws Exception{
         Product product = products.getProductArr("모델명");
         ArrayList<String> productValue = product.getValue();
         ArrayList<String> leastPriceProductValue = new ArrayList<String>();
-        ArrayList<String> linkArrForProduct = new ArrayList<String>();
-        ArrayList<String> priceArrForProduct = new ArrayList<String>();
+        ArrayList<String> logArrForProduct = new ArrayList<String>();
 
         for(int i = 0; i < productValue.size(); i+=1) {
             try {
                 getLowPrice(productValue.get(i));
                 lastPrice = trimNumber(lastPrice);
+
                 leastPriceProductValue.add(lastPrice);
-                linkArrForProduct.add(getArrAsString(linkArr));
-                priceArrForProduct.add(getArrAsString(priceArr));
+                logArrForProduct.add(log.toString());
+
             }
             catch(Exception e) {
                 e.printStackTrace();
@@ -51,8 +53,8 @@ public class AnalyzeHtml {
         }
 
         products.setProductArr("갱신된 최저가", leastPriceProductValue);
-        products.setProductArr("링크 배열", linkArrForProduct);
-        products.setProductArr("가격 배열", priceArrForProduct);
+        products.setProductArr("로그", logArrForProduct);
+
 
         return products;
     }
@@ -80,7 +82,8 @@ public class AnalyzeHtml {
 
     public static void setPrice(String price)throws Exception{
         lastPrice = price;
-        priceArr.add(price);
+        log.append("Price : " + price + "\n");
+        //priceArr.add(price);
     }
 
 
@@ -112,9 +115,12 @@ public class AnalyzeHtml {
 
         priceArr = new ArrayList<String>();
         linkArr = new ArrayList<String>();
+
+        log = new StringBuilder();
     }
 
     static String trimName(String name){
+        log.append("검색할 이름 : " + name + "\n");
         if(!isProductNameOnly(name)) {
             return leaveProductNameOnly(name);
         }
@@ -136,11 +142,13 @@ public class AnalyzeHtml {
         String[] names = name.split("\\.");
         System.out.println("so after split with ., the name is " + names[0]);
         String name_tmp = names[0];
+        log.append("product Name Only : " + name_tmp + "\n");
         return name_tmp;
     }
 
     static Document getDocFromLink(String link)throws Exception{
-        linkArr.add(link);
+        //linkArr.add(link);
+        log.append("링크 : " + link + "\n");
         return Jsoup.connect(link).get();
     }
 
@@ -160,6 +168,7 @@ public class AnalyzeHtml {
     }
 
     static void getPriceFromDoc(String searchString) throws Exception{
+        log.append("getPriceFromDoc ( " + searchString + " )\n");
         elements = doc.getElementsByClass(searchString);
 
         firstPriceHtmlText = elements.first().text();
@@ -168,24 +177,33 @@ public class AnalyzeHtml {
     }
 
     static void analyzeIfItHasComparePage() throws Exception{
+        log.append("analyzeIfItHasComparePage (), 이름에 '~' 또는 '가격비교' 또는 아무것도 없는경우\n");
         if(firstPriceHtmlText.contains("~")){
+            log.append("case 1 : 이름에 ~ 있는 경우\n");
             String [] priceOfWhole = firstPriceHtmlText.split(" ~ ");
             setPrice(priceOfWhole[0]);
         }
         else if(firstPriceHtmlText.contains("가격비교")){
+            log.append("case 2 : 이름에 '가격비교' 있는 경우\n");
             performComparePage();
+        }
+        else{
+            log.append("case 3 : 이름만 있는 경우, 아무것도 안함\n");
         }
 
     }
 
     static void performComparePage()throws Exception{
+        log.append("performComparePage ()\n");
         analyzeCompareButton();
         if(href.equals("#")) {
-            getDocFromComparePage(product_id, product_imgsignature, nclickavalue);
+            log.append("case 1 : compare button href에 '#'이 있는 경우\n");
+            getDocFromComparePageFirstScenario(product_id, product_imgsignature, nclickavalue);
             getPriceFromDoc("_price_reload");
         }
         else{
-            getDocFromComparePageScenario(href);
+            log.append("case 2 : compare button href에 '#'이 없는 경우\n");
+            getDocFromComparePageSecondScenario(href);
             getPriceFromDoc("price");
         }
 
@@ -210,26 +228,40 @@ public class AnalyzeHtml {
         System.out.println("child element nclickavalue : " + nclickavalue);
     }
 
-    static void getDocFromComparePage(String product_id, String product_imgsignature, String nclickavalue) throws Exception{
-        doc = null;
+    static void getDocFromComparePageFirstScenario(String product_id, String product_imgsignature, String nclickavalue) throws Exception{
         //doc = Jsoup.connect("http://shopping.naver.com/search/popup/same_image.nhn?nv_mid="+ product_id +"&icode=" + product_imgsignature + "&na="+ nclickavalue).get();
         doc = getDocFromLink("http://shopping.naver.com/search/popup/same_image.nhn?nv_mid="+ product_id +"&icode=" + product_imgsignature + "&na="+ nclickavalue);
     }
 
-    static void getDocFromComparePageScenario(String href) throws Exception{
-        doc = null;
+    static void getDocFromComparePageSecondScenario(String href) throws Exception{
         //doc = Jsoup.connect("http://shopping.naver.com" + href).get();
         doc = getDocFromLink("http://shopping.naver.com" + href);
     }
 
     static String trimNumber(String lowPrice){
+        log.append("trimNumber ()\n");
         String tmp = null;
         /*if(lowPrice.contains(",")){
             tmp = lowPrice.replace(",", "");
         }*/
+        if(lowPrice.contains("모바일가격")){
+            log.append("모바일가격 제거하기\n");
+        }
         tmp = lowPrice.replace("모바일가격 ", "");
+
+        if(lowPrice.contains("QR코드")){
+            log.append("QR코드 제거하기\n");
+        }
         String tmp2 = tmp.replace(" QR코드", "");
+
+        if(lowPrice.contains("최저가")){
+            log.append("최저가 제거하기\n");
+        }
         String tmp3 = tmp2.replace("최저가", "");
+
+        if(lowPrice.contains("원")){
+            log.append("원 제거하기\n");
+        }
         String tmp4 = tmp3.replace("원", "");
         return tmp4;
     }
