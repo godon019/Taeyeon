@@ -1,197 +1,140 @@
 package godon.MainFlow;
 
-import godon.Product.Product;
-import godon.Product.Products;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
+import java.io.IOException;
 
 /**
  * Created by Godon on 2016-06-30.
  */
 public class AnalyzeHtml {
 
-    static Document doc;
-    static Elements elements;
-    static Element element;
+    Document doc;
+    Elements elements;
+    Element element;
 
-    static String href;
-    static String product_id ;
-    static String product_imgsignature;
-    static String nclickavalue;
+    String href;
+    String product_id ;
+    String product_imgsignature;
+    String nclickavalue;
 
-    static String priceHtmlText;
-    static String titleHtmlText;
+    String priceHtmlText;
 
-    static String lastPrice;
+    String lastPrice;
 
-    static ArrayList<String> priceArr;
-    static ArrayList<String> linkArr;
 
-    static StringBuilder log;
+    StringBuilder log;
 
-    public static Products getAnalyzedProducts(Products products) throws Exception{
-        Product product = products.getProductArr("모델명");
-        ArrayList<String> productValue = product.getValue();
+    String productName;
 
-        ArrayList<String> leastPriceProductValue = new ArrayList<String>();
-        initializeArrayWithProductSizeToPreventErrorRelatedToException(productValue, leastPriceProductValue);
-        ArrayList<String> logArrForProduct = new ArrayList<String>();
-        initializeArrayWithProductSizeToPreventErrorRelatedToException(productValue, logArrForProduct);
+    public enum FirstPageCase{
+        NOT_DETERMINED_YET,
+        NORMAL_PRICE,
+        PRICE_HAS_WAVE_CHARACTER,
+        TO_SECOND_PAGE;
+    }
+    AnalyzeHtml.FirstPageCase firstPageCase;
 
-        for(int i = 0; i < productValue.size(); i+=1) {
-            try {
-                getLowPrice(productValue.get(i));
-                lastPrice = trimNumber(lastPrice);
+    public enum SecondPageCase{
+        NOT_SECOND_CASE,
+        NOT_DETERMINED_YET,
+        HREF_HAS_SHARP,
+        HREF_HAS_NO_SHARP;
+    }
+    AnalyzeHtml.SecondPageCase secondPageCase;
 
-                leastPriceProductValue.set(i, lastPrice);  //set으로 바꿔야함 그래야 exception발생시 제대로 된 곳에 적용됨
-                logArrForProduct.set(i, log.toString());
 
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
+    public AnalyzeHtml(String productName){
+        this.productName = productName;
+        firstPageCase = FirstPageCase.NOT_DETERMINED_YET;
+        secondPageCase = SecondPageCase.NOT_DETERMINED_YET;
+    }
+
+    StringBuilder getLog(StringBuilder log)throws Exception{
+
+        this.log = log;
+        log.append("검색할 이름 : " + productName + "\n");
+
+        if(hasSearchResultFromFirstPage(productName)){
+            getInformationFromFirstPage();
+            performSecondPageIfNeeded();
         }
 
-        products.setProductArr("갱신된 최저가", leastPriceProductValue);
-        products.setProductArr("로그", logArrForProduct);
-
-
-        return products;
+        appendCasesTo(log);
+        return log;
     }
 
-    public static void initializeArrayWithProductSizeToPreventErrorRelatedToException(ArrayList<String> valueOfProduct, ArrayList<String> array){
-        for (int i = 0; i < valueOfProduct.size(); i += 1) {
-            array.add("갱신안됨");
+    void appendCasesTo(StringBuilder log){
+        log.append("FirstPageCase : " + firstPageCase + "\n");
+        log.append("SecondPageCase : " + secondPageCase + "\n");
+    }
+
+    void performSecondPageIfNeeded()throws Exception{
+
+        if(analyzePriceName()==FirstPageCase.TO_SECOND_PAGE){
+            performSecondPage();
         }
-        return;
     }
 
-    static String getArrAsString(ArrayList<String> arr){
-        return arr.toString();
-    }
-
-    public static ArrayList<String> getLeastPriceOfProdut(ArrayList<String> productToSearch){
-        ArrayList<String> lowPriceListToReturn = new ArrayList<String>();
-        for(int i = 0; i < productToSearch.size(); i+=1) {
-            try {
-                getLowPrice(productToSearch.get(i));
-                lastPrice = trimNumber(lastPrice);
-                lowPriceListToReturn.add(lastPrice);
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return lowPriceListToReturn;
-    }
-
-
-
-    public static void setPrice(String price)throws Exception{
-        lastPrice = price;
-        log.append("Price : " + price + "\n");
-        //priceArr.add(price);
-    }
-
-
-    static void getLowPrice(String product_name)throws Exception{
-        System.out.println("검색할 이름 " + product_name);
-
-        initializeStringsToUse();
-
-        if(getDocFromNaverShopping(trimName(product_name))) {
-            getPriceFromDoc("price");
-            //Test
-            getProductTitleFromDoc();
-            analyzeFirstPricePage();
-        }
-
-        System.out.println("최종가격 : "+ lastPrice);
-    }
-
-    static void initializeStringsToUse(){
-        doc = null;
-        elements = null;
-        element = null;
-
-        href = null;
-        product_id  = null;
-        product_imgsignature = null;
-        nclickavalue = null;
-
-        priceHtmlText = null;
-        titleHtmlText = null;
-        lastPrice = null;
-
-        priceArr = new ArrayList<String>();
-        linkArr = new ArrayList<String>();
-
-        log = new StringBuilder();
-    }
-
-    static String trimName(String name){
-        log.append("검색할 이름 : " + name + "\n");
-        if(!isProductModelNameOnly(name)) {
-            return leaveProductModelNameOnly(name);
-        }
-        else
-            return name;
-    }
-
-    static boolean isProductModelNameOnly(String name){
-        if( name.contains(".")){
-            System.out.println(name + " contains . ");
-            return false;
+    void performSecondPage()throws Exception{
+        if(analyzeCompareButtonForSecondPage() == SecondPageCase.HREF_HAS_SHARP){
+            performCaseOneOfSecondPage();
         }
         else{
-            return true;
+            performCaseTwoOfSecondPage();
         }
     }
 
-    static String leaveProductModelNameOnly(String name){
-        String[] names = name.split("\\.");
-        System.out.println("so after split with ., the name is " + names[0]);
-        String name_tmp = names[0];
-        log.append("product Name Only : " + name_tmp + "\n");
-        return name_tmp;
+    void getInformationFromFirstPage(){
+        try {
+            getElementFromDoc("price");
+            getProductTitleFromDoc();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
-    static Document getDocFromLink(String link)throws Exception{
-        //linkArr.add(link);
-        log.append("링크 : " + link + "\n");
-        return Jsoup.connect(link).get();
-    }
-
-    static boolean getDocFromNaverShopping(String productName) throws Exception{
-        //doc = Jsoup.connect("http://shopping.naver.com/search/all.nhn?query=" + productName + "&cat_id=&frm=NVSHATC").get();
-        doc = getDocFromLink("http://shopping.naver.com/search/all.nhn?query=" + productName + "&cat_id=&frm=NVSHATC");
+    boolean hasSearchResultFromFirstPage(String name){
+        doc = getDocFromLink("http://shopping.naver.com/search/all.nhn?query=" + name + "&cat_id=&frm=NVSHATC");
         if(hasNoSearchResult(doc)){
-            System.out.println("검색결과가 없습니다");
             setPrice("검색 결과 없음");
+
             return false;
         }
         return true;
     }
 
-    static boolean hasNoSearchResult(Document doc){
+
+    Document getDocFromLink(String link){
+        log.append("링크 : " + link + "\n");
+        Document document = null;
+        try {
+            document = Jsoup.connect(link).get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return document;
+    }
+
+
+    boolean hasNoSearchResult(Document doc){
         return doc.toString().contains(" 대한 네이버쇼핑 내 검색 결과가 없습니다.");
     }
 
-    static void getPriceFromDoc(String searchString) throws Exception{
-        log.append("getPriceFromDoc ( " + searchString + " )\n");
+    void getElementFromDoc(String searchString) throws Exception{
+        log.append("getElementFromDoc ( " + searchString + " )\n");
         elements = doc.getElementsByClass(searchString);
 
         priceHtmlText = elements.first().text();
         System.out.println("element : "+ priceHtmlText);
         setPrice(priceHtmlText);
-
     }
 
-    static void getProductTitleFromDoc() throws Exception{
+    void getProductTitleFromDoc() throws Exception{
         log.append("getProductTitleFromDoc( )\n");
 
         int cases = whichCaseOfGetProductTitleFromDoc();
@@ -208,15 +151,13 @@ public class AnalyzeHtml {
         }
     }
 
-    static int whichCaseOfGetProductTitleFromDoc()throws Exception{
+    int whichCaseOfGetProductTitleFromDoc()throws Exception{
         Elements elements = doc.select("li._model_list div.info a");
 
         if(!doc.select("li._model_list div.info a").isEmpty()){
-            System.out.println("test 1" + elements.toString());
             return 1;
         }
         else if(!doc.select("li._product_list div.info a").isEmpty()){
-            System.out.println("test 2" + elements.toString());
             return 2;
         }
         else{
@@ -224,14 +165,13 @@ public class AnalyzeHtml {
         }
     }
 
-    static void getProductTitleFromDocCaseOne()throws Exception{
+    void getProductTitleFromDocCaseOne()throws Exception{
         String titleHtmlText = elements.first().text();
-        System.out.println("ProductTitle : "+ titleHtmlText);
         log.append("Case 1 : <li> class name is _model_list\n");
         log.append("ProductTitle : " + titleHtmlText + "\n");
     }
 
-    static void getProductTitleFromDocCaseTwo()throws Exception{
+    void getProductTitleFromDocCaseTwo()throws Exception{
         Elements elements = doc.select("li._product_list div.info a");
         String titleHtmlText = elements.first().text();
         log.append("Case 2 : <li> class name is _product_list\n");
@@ -239,31 +179,64 @@ public class AnalyzeHtml {
         log.append("ProductTitle : " + titleHtmlText + "\n");
     }
 
-    static void analyzeFirstPricePage() throws Exception{
-        log.append("analyzeFirstPricePage(), 이름에 '~' 또는 '가격비교' 또는 아무것도 없는경우\n");
+    FirstPageCase analyzePriceName() throws Exception{
+        log.append("analyzePriceNameOfFirstPage(), 이름에 '~' 또는 '가격비교' 또는 아무것도 없는경우\n");
+
         if(priceHtmlText.contains("~")){
-            log.append("case 1 : 이름에 ~ 있는 경우 ~제외하면 최종가격 결정\n");
+            log.append("case 1 : 이름에 ~ 있는 경우 ~제외하고 앞쪽 가격으로 최종가격 결정\n");
             String [] priceOfWhole = priceHtmlText.split(" ~ ");
             setPrice(priceOfWhole[0]);
+            firstPageCase = FirstPageCase.PRICE_HAS_WAVE_CHARACTER;
+        }
+        else if(priceHtmlText.contains("가격비교") && priceHtmlText.contains("~")){
+            log.append("case 1 : 이름에 ~ 있는 경우 그리고 가격비교도 있는경우 ~제외하고 앞쪽 가격으로 최종가격 결정\n");
+            String [] priceOfWhole = priceHtmlText.split(" ~ ");
+            setPrice(priceOfWhole[0]);
+            firstPageCase = FirstPageCase.PRICE_HAS_WAVE_CHARACTER;
         }
         else if(priceHtmlText.contains("가격비교")){
-            log.append("case 2 : 이름에 '가격비교' 있는 경우 compare button 분석\n");
-            analyzeCompareButton();
+            log.append("case 2 : 이름에 '가격비교' 있는 경우 그리고 ~ 없는 경우 compare button 분석하고 SecondPage로\n");
+            if(priceHtmlText.contains("~")){
+                throw new Exception("가격비교, ~ 가 같이 들어있으면 ~ 케이스로 먼저 가도록 해야함");
+            }
+            firstPageCase = FirstPageCase.TO_SECOND_PAGE;
         }
         else{
             log.append("case 3 : 이름만 있는 경우, 아무것도 안하고 최종 가격 결정\n");
+            firstPageCase = FirstPageCase.NORMAL_PRICE;
         }
 
+        return firstPageCase;
     }
 
-    static void analyzeCompareButton()throws Exception{
-        log.append("analyzeCompareButton ()\n");
+
+    SecondPageCase analyzeCompareButtonForSecondPage()throws Exception{
+        log.append("analyzeCompareButtonForSecondPage ()\n");
         analyzeCompareButtonElements();
-        analyzeElementsResult();
 
+        if(href.equals("#")) {
+            log.append("case 1 : compare button href에 '#'이 있는 경우\n");
+            secondPageCase = SecondPageCase.HREF_HAS_SHARP;
+        }
+        else{
+            log.append("case 2 : compare button href에 '#'이 없는 경우\n");
+            secondPageCase = SecondPageCase.HREF_HAS_NO_SHARP;
+        }
+
+        return secondPageCase;
     }
 
-    static void analyzeCompareButtonElements(){
+    void performCaseOneOfSecondPage()throws Exception{
+        getDocFromComparePageFromButtonWithSharp(product_id, product_imgsignature, nclickavalue);
+        getElementFromDoc("_price_reload");
+    }
+
+    void performCaseTwoOfSecondPage()throws Exception{
+        getDocFromComparePageFromButtonWithoutSharp(href);
+        getElementFromDoc("price");
+    }
+
+    void analyzeCompareButtonElements(){
         System.out.println("elements : " + elements.first().toString());
         element = elements.first().getElementsByTag("a").first();
 
@@ -282,47 +255,18 @@ public class AnalyzeHtml {
         System.out.println("child element nclickavalue : " + nclickavalue);
     }
 
-    static void analyzeElementsResult()throws Exception{
-        if(href.equals("#")) {
-            log.append("case 1 : compare button href에 '#'이 있는 경우\n");
-            getDocFromComparePageFromButtonWithSharp(product_id, product_imgsignature, nclickavalue);
-            getPriceFromDoc("_price_reload");
-        }
-        else{
-            log.append("case 2 : compare button href에 '#'이 없는 경우\n");
-            getDocFromComparePageFromButtonWithoutSharp(href);
-            getPriceFromDoc("price");
-        }
-    }
-
-    static void getDocFromComparePageFromButtonWithSharp(String product_id, String product_imgsignature, String nclickavalue) throws Exception{
+    void getDocFromComparePageFromButtonWithSharp(String product_id, String product_imgsignature, String nclickavalue) throws Exception{
         doc = getDocFromLink("http://shopping.naver.com/search/popup/same_image.nhn?nv_mid="+ product_id +"&icode=" + product_imgsignature + "&na="+ nclickavalue);
     }
 
-    static void getDocFromComparePageFromButtonWithoutSharp(String href) throws Exception{
+    void getDocFromComparePageFromButtonWithoutSharp(String href) throws Exception{
         doc = getDocFromLink("http://shopping.naver.com" + href);
     }
 
-    static String trimNumber(String lowPrice){
-        log.append("trimNumber ()\n");
-
-        if(lowPrice.contains("모바일가격")){
-            log.append("모바일가격 제거하기\n");
-        }
-        String tmp = lowPrice.replace("모바일가격 ", "");
-
-        if(lowPrice.contains("QR코드")){
-            log.append("QR코드 제거하기\n");
-        }
-        String tmp2 = tmp.replace(" QR코드", "");
-
-        if(lowPrice.contains("최저가")){
-            log.append("최저가 제거하기\n");
-        }
-        String tmp3 = tmp2.replace("최저가", "");
-
-        String tmp4 = tmp3.replace("원", "");
-        return tmp4;
+    public  void setPrice(String price){
+        log.append("Price : " + price + "\n");
     }
+
+
 
 }

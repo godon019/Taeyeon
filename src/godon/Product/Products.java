@@ -77,13 +77,14 @@ public class Products {
         throw new Exception("해당 하는 이름 :" +name+" 의 set할 Product가 존재 하지 않습니다");
     }
 
-    public Product getProductArr(String name) throws Exception{
-        for(Product product : productArr){
-            if(product.getName().equals(name)){
-                return product;
+    public Product getProductArr(String name)throws Exception{
+            for (Product product : productArr) {
+                if (product.getName().equals(name)) {
+                    return product;
+                }
             }
-        }
         throw new Exception("해당 하는 이름 :" +name+" 의 get할 Product가 존재 하지 않습니다");
+
     }
 
 }
