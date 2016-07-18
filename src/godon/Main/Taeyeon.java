@@ -18,6 +18,7 @@ public class Taeyeon{
 
         while(frame.okayPushed == false){
             try {
+
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
