@@ -50,17 +50,17 @@ public class Products {
         int sizeOfNotNullValue = 0;
         for(Product product : productArr){
             if(product.isPrimitive()){
-                sizeOfNotNullValue = product.getValue().size();
+                sizeOfNotNullValue = product.getValues().size();
             }
         }
 
         for(Product product : productArr){
-            if(product.getValue() == null){
+            if(product.getValues() == null){
                 ArrayList<String> values = new ArrayList<String>();
                 for(int i = 0; i<sizeOfNotNullValue; i++){
                     values.add("갱신 안됨");
                 }
-                product.setValue(values);
+                product.setValues(values);
             }
         }
     }
@@ -70,7 +70,7 @@ public class Products {
     public void setProductArr(String name, ArrayList<String> value) throws Exception{
         for(Product product : productArr){
            if(product.getName().equals(name)){
-               product.setValue(value);
+               product.setValues(value);
                return;
            }
         }

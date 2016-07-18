@@ -2,10 +2,6 @@ package godon.Main;
 
 import godon.Environment.Directories;
 import godon.Environment.Frame;
-import godon.MainFlow.AnalyzingWholeProductHtml;
-import godon.MainFlow.LoadFromExcel;
-import godon.MainFlow.SaveToExcel;
-import godon.Product.Products;
 
 /**
  * Created by Godon on 2016-06-28.
@@ -28,41 +24,8 @@ public class Taeyeon{
             }
         }
 
-        System.out.println(String.format("real x = %d, y = %d", 3, 4));
-
-        Products products = new Products();
-
-        LoadFromExcel LoadFromExcel = new LoadFromExcel();
-        try {
-            products = LoadFromExcel.perform(directories.getLoadDirectory());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-/*
-        try {
-            products = AnalyzeHtml.getAnalyzedProducts(products);
-            //products.setProductArr("갱신된 최저가", AnalyzeHtml.getLeastPriceOfProdut( products.getProductArr("모델명").getValue() ) );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-*/
-        AnalyzingWholeProductHtml analyzingWholeProductHtml = new AnalyzingWholeProductHtml();
-        try {
-            products.setProductArr("로그", analyzingWholeProductHtml.performAll(products.getProductArr("모델명").getValue()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        SaveToExcel saveToExcel = new SaveToExcel();
-        try {
-            saveToExcel.products = products;
-            saveToExcel.perform(directories.getSaveDirectory());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+        LoadAnalyzeAndSave loadAnalyzeAndSave = new LoadAnalyzeAndSave(directories);
+        loadAnalyzeAndSave.perform();
 
 
     }

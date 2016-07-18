@@ -13,7 +13,7 @@ public class Product {
     }
     IOType iOType;
     String name;
-    ArrayList<String> value;
+    ArrayList<String> values;
     Boolean isPrimitive;
 
     public Boolean isPrimitive() {
@@ -23,7 +23,7 @@ public class Product {
     public Product(String name, IOType iOType) {
         this.name = name;
         this.iOType = iOType;
-        this.value = null;
+        this.values = null;
         this.isPrimitive = false;
     }
 
@@ -58,10 +58,8 @@ public class Product {
         throw new Exception("잘못된 enum 타입입니다");
     }
 
-
-
-    public void setValue(ArrayList<String> value) {
-        this.value = value;
+    public void setValues(ArrayList<String> values) {
+        this.values = values;
     }
 
     public void setName(String name) {
@@ -73,9 +71,37 @@ public class Product {
         return name;
     }
 
-    public ArrayList<String> getValue() {
-        return value;
+    public ArrayList<String> getValues() {
+        return values;
     }
 
+    public boolean equals(Product product){
+        if((areNameeEqual(product)==true) && (areValuesEqual(product)==true))
+            return true;
+        else
+            return false;
+    }
+
+    public boolean areNameeEqual(Product product){
+        if(this.getName().equals(product.getName())) {
+            System.out.println("이름이 같습니다");
+            return true;
+        }
+        else {
+            System.out.println("이름이 다릅니다");
+            return false;
+        }
+    }
+
+    public boolean areValuesEqual(Product product){
+        if(product.getValues().equals(this.getValues())) {
+            System.out.println("values가 같습니다");
+            return true;
+        }
+        else {
+            System.out.println("values가 다릅니다");
+            return false;
+        }
+    }
 
 }

@@ -18,7 +18,7 @@ public class LoadFromExcel {
     private Sheet sheet;
     private Products products;
 
-    public Products perform(String directory) {
+    public Products getProducts(String directory) {
         products = new Products();
 
         try {
@@ -42,7 +42,7 @@ public class LoadFromExcel {
     private void setProductArr() throws Exception{
         for(Product product : products.getProductArr()){
             if(product.isReadable()) {
-                product.setValue(getListOfSpecificColumnContents(product.getName()));
+                product.setValues(getListOfSpecificColumnContents(product.getName()));
             }
         }
 

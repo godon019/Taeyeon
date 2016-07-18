@@ -22,26 +22,31 @@ public class SaveToExcel {
 
     public Products products;
 
-    public void perform(String directory) throws Exception{
+    public void saveProducts(String directory){
         //Workbook wb = new HSSFWorkbook();
-        wb = new XSSFWorkbook();
+        try {
+            wb = new XSSFWorkbook();
 
-        sheet = wb.createSheet("new sheet");
+            sheet = wb.createSheet("new sheet");
 
-        //New
-        writeExcelWithProducts();
+            //New
+            writeExcelWithProducts();
 
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream(directory);
-        wb.write(fileOut);
-        fileOut.close();
+            // Write the output to a file
+            FileOutputStream fileOut = new FileOutputStream(directory);
+            wb.write(fileOut);
+            fileOut.close();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     void writeExcelWithProducts()throws Exception{
         int columnPosition = 0;
         for(Product product : products.getProductArr()){
             if(product.isWritable()){
-                setColumnWithArray(columnPosition, product.getName(), product.getValue());
+                setColumnWithArray(columnPosition, product.getName(), product.getValues());
                 columnPosition++;
             }
         }

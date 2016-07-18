@@ -1,4 +1,4 @@
-package godon.MainFlow;
+package godon.Analyze;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -55,7 +55,9 @@ public class AnalyzeHtml {
         this.log = log;
         log.append("검색할 이름 : " + productName + "\n");
 
-        if(hasSearchResultFromFirstPage(trimName(productName))){
+        trimNameAndUpdateLog();
+
+        if(hasSearchResultFromFirstPage(productName)){
             getInformationFromFirstPage();
             performSecondPageIfNeeded();
         }
@@ -64,32 +66,12 @@ public class AnalyzeHtml {
         return log;
     }
 
-    String trimName(String name){
-        log.append("검색할 이름 : " + name + "\n");
-        if(!isProductNameOnly(name)) {
-            return leaveProductNameOnly(name);
-        }
-        else
-            return name;
+    void trimNameAndUpdateLog(){
+        Trimming trimming = new Trimming(log);
+        productName = trimming.getTrimmedName(productName);
+        this.log = trimming.getLog();
     }
 
-    boolean isProductNameOnly(String name){
-        if( name.contains(".")){
-            System.out.println(name + " contains . ");
-            return false;
-        }
-        else{
-            return true;
-        }
-    }
-
-    String leaveProductNameOnly(String name){
-        String[] names = name.split("\\.");
-        System.out.println("so after split with ., the name is " + names[0]);
-        String name_tmp = names[0];
-        log.append("product Name Only : " + name_tmp + "\n");
-        return name_tmp;
-    }
 
     boolean hasSearchResultFromFirstPage(String name){
         doc = getDocFromLink("http://shopping.naver.com/search/all.nhn?query=" + name + "&cat_id=&frm=NVSHATC");
