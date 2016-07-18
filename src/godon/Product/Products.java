@@ -17,9 +17,9 @@ public class Products {
 
         productArr = new ArrayList<Product>();
         productArr.add(new Product("일련번호", Product.IOType.WRITE_ONLY));
-        productArr.add(new Product("모델명", Product.IOType.READ_AND_WRITE));
-        productArr.add(new Product("최저가", Product.IOType.READ_AND_WRITE));
-        productArr.add(new Product("갱신된 최저가", Product.IOType.WRITE_ONLY));
+        productArr.add(new ComparableProduct("모델명", Product.IOType.READ_AND_WRITE, ComparableProduct.ValueType.STRING));
+        productArr.add(new ComparableProduct("최저가", Product.IOType.READ_AND_WRITE, ComparableProduct.ValueType.NUMBER));
+        productArr.add(new ComparableProduct("갱신된 최저가", Product.IOType.WRITE_ONLY, ComparableProduct.ValueType.NUMBER));
         productArr.add(new Product("로그", Product.IOType.WRITE_ONLY));
         try {
             setPrimitiveProduct("모델명");
@@ -45,15 +45,35 @@ public class Products {
         }
     }
 
-    public void setNullValuesOfProductToProperValues(){
+
+    public void initializeNullValuesOfProductToProperValuesWithPrimeProduct() throws Exception{
 
         int sizeOfNotNullValue = 0;
+        sizeOfNotNullValue = getPrimeProduct().getValues().size();
+        initializeProductsWithNotNullValue(sizeOfNotNullValue);
+    }
+
+    Product getPrimeProduct() throws Exception{
+        Product productToReturn = null;
+        int primeProductCount = 0;
         for(Product product : productArr){
-            if(product.isPrimitive()){
-                sizeOfNotNullValue = product.getValues().size();
+            if(product instanceof PrimeProduct){
+                productToReturn = product;
+                primeProductCount++;
             }
         }
 
+        if(primeProductCount == 0){
+            throw new Exception("There is no Prime Product");
+        }
+        if(primeProductCount > 1){
+            throw new Exception("There are more than one Prime Product");
+        }
+
+        return productToReturn;
+    }
+
+    void initializeProductsWithNotNullValue(int sizeOfNotNullValue){
         for(Product product : productArr){
             if(product.getValues() == null){
                 ArrayList<String> values = new ArrayList<String>();
@@ -64,7 +84,6 @@ public class Products {
             }
         }
     }
-
 
 
     public void setProductArr(String name, ArrayList<String> value) throws Exception{

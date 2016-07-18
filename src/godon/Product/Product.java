@@ -12,12 +12,13 @@ public class Product {
         READ_AND_WRITE;
     }
     IOType iOType;
+
     String name;
     ArrayList<String> values;
     Boolean isPrimitive;
 
-    public Boolean isPrimitive() {
-        return isPrimitive;
+    public Product(){
+
     }
 
     public Product(String name, IOType iOType) {
@@ -25,6 +26,10 @@ public class Product {
         this.iOType = iOType;
         this.values = null;
         this.isPrimitive = false;
+    }
+
+    public Boolean isPrimitive() {
+        return isPrimitive;
     }
 
     public void setItAsPrimitive(){
@@ -75,33 +80,6 @@ public class Product {
         return values;
     }
 
-    public boolean equals(Product product){
-        if((areNameeEqual(product)==true) && (areValuesEqual(product)==true))
-            return true;
-        else
-            return false;
-    }
 
-    public boolean areNameeEqual(Product product){
-        if(this.getName().equals(product.getName())) {
-            System.out.println("이름이 같습니다");
-            return true;
-        }
-        else {
-            System.out.println("이름이 다릅니다");
-            return false;
-        }
-    }
-
-    public boolean areValuesEqual(Product product){
-        if(product.getValues().equals(this.getValues())) {
-            System.out.println("values가 같습니다");
-            return true;
-        }
-        else {
-            System.out.println("values가 다릅니다");
-            return false;
-        }
-    }
 
 }

@@ -15,7 +15,7 @@ public class LoadAnalyzeAndSave {
         this.directories = directories;
     }
 
-    void perform(){
+    public void perform(){
         LoadFromExcel LoadFromExcel = new LoadFromExcel();
         Products products = LoadFromExcel.getProducts(directories.getLoadDirectory());
 

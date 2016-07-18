@@ -77,7 +77,6 @@ public class AnalyzeHtml {
         doc = getDocFromLink("http://shopping.naver.com/search/all.nhn?query=" + name + "&cat_id=&frm=NVSHATC");
         if(hasNoSearchResult(doc)){
             setPrice("검색 결과 없음");
-
             return false;
         }
         return true;
@@ -87,12 +86,67 @@ public class AnalyzeHtml {
         try {
             priceHtmlText = getPriceElementsFromDoc("price");
             setPrice(priceHtmlText);
-            log.append("Category depth : " + getDepthElementsFromDoc("depth") + "\n");
+            log.append("Category depth : " + getCategoryDepthElementsFromDoc("depth") + "\n");
             getProductTitleFromDoc();
         }
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    String getPriceElementsFromDoc(String searchString) throws Exception{
+        log.append("getPriceElementsFromDoc ( " + searchString + " )\n");
+
+        priceElements = doc.getElementsByClass(searchString);
+        String text = priceElements.first().text();
+        System.out.println("element : "+ text);
+        return text;
+    }
+
+    String getCategoryDepthElementsFromDoc(String searchString) throws Exception{
+        Elements elements = doc.getElementsByClass(searchString);
+        String text = elements.first().text();
+        return text;
+    }
+
+    void getProductTitleFromDoc() throws Exception{
+        log.append("getProductTitleFromDoc( )\n");
+        chooseTitleFromLiTag();
+    }
+
+    void chooseTitleFromLiTag()throws Exception{
+        Elements elements = null;
+        if((elements = getElementsWithLiTag("_model_list")) != null){
+            getProductTitleFromDocCaseOne(elements);
+        }
+        else if((elements = getElementsWithLiTag("_product_list")) != null){
+            getProductTitleFromDocCaseTwo(elements);
+        }
+        else{
+            throw new Exception("chooseTitleFromLiTag() 에서 없는 케이스입니다");
+        }
+    }
+
+    Elements getElementsWithLiTag(String liTag){
+        Elements elements = doc.select("li."+liTag+" div.info a");
+        if(elements.isEmpty()){
+            return null;
+        }
+        else {
+            return elements;
+        }
+    }
+
+    void getProductTitleFromDocCaseOne(Elements elements)throws Exception{
+        String titleHtmlText = elements.first().text();
+        log.append("Case 1 : <li> class name is _model_list\n");
+        log.append("ProductTitle : " + titleHtmlText + "\n");
+    }
+
+    void getProductTitleFromDocCaseTwo(Elements elements)throws Exception{
+        String titleHtmlText = elements.first().text();
+        log.append("Case 2 : <li> class name is _product_list\n");
+        log.append("ProductTitle : " + titleHtmlText + "\n");
     }
 
     boolean hasNoSearchResult(Document doc){
@@ -120,6 +174,17 @@ public class AnalyzeHtml {
         }
     }
 
+    void performCaseOneOfSecondPage()throws Exception{
+        getDocFromComparePageFromButtonWithSharp(product_id, product_imgsignature, nclickavalue);
+        priceHtmlText = getPriceElementsFromDoc("_price_reload");
+        setPrice(priceHtmlText);
+    }
+
+    void performCaseTwoOfSecondPage()throws Exception{
+        getDocFromComparePageFromButtonWithoutSharp(href);
+        priceHtmlText = getPriceElementsFromDoc("price");
+        setPrice(priceHtmlText);
+    }
 
     Document getDocFromLink(String link){
         log.append("링크 : " + link + "\n");
@@ -130,62 +195,6 @@ public class AnalyzeHtml {
             e.printStackTrace();
         }
         return document;
-    }
-
-    String getPriceElementsFromDoc(String searchString) throws Exception{
-        log.append("getPriceElementsFromDoc ( " + searchString + " )\n");
-
-        priceElements = doc.getElementsByClass(searchString);
-        String text = priceElements.first().text();
-        System.out.println("element : "+ text);
-        return text;
-    }
-
-    String getDepthElementsFromDoc(String searchString) throws Exception{
-        Elements elements = doc.getElementsByClass(searchString);
-        String text = elements.first().text();
-        return text;
-    }
-
-    void getProductTitleFromDoc() throws Exception{
-        log.append("getProductTitleFromDoc( )\n");
-
-        chooseTitleFromSomeCases();
-    }
-
-    void chooseTitleFromSomeCases()throws Exception{
-        Elements elements = null;
-        if((elements = getElementsWithLiTag("_model_list")) != null){
-            getProductTitleFromDocCaseOne(elements);
-        }
-        else if((elements = getElementsWithLiTag("_product_list")) != null){
-            getProductTitleFromDocCaseTwo(elements);
-        }
-        else{
-            throw new Exception("chooseTitleFromSomeCases() 에서 없는 케이스입니다");
-        }
-    }
-
-    Elements getElementsWithLiTag(String liTag){
-        Elements elements = doc.select("li."+liTag+" div.info a");
-        if(elements.isEmpty()){
-            return null;
-        }
-        else {
-            return elements;
-        }
-    }
-
-    void getProductTitleFromDocCaseOne(Elements elements)throws Exception{
-        String titleHtmlText = elements.first().text();
-        log.append("Case 1 : <li> class name is _model_list\n");
-        log.append("ProductTitle : " + titleHtmlText + "\n");
-    }
-
-    void getProductTitleFromDocCaseTwo(Elements elements)throws Exception{
-        String titleHtmlText = elements.first().text();
-        log.append("Case 2 : <li> class name is _product_list\n");
-        log.append("ProductTitle : " + titleHtmlText + "\n");
     }
 
     FirstPageCase analyzePriceName() throws Exception{
@@ -221,7 +230,6 @@ public class AnalyzeHtml {
         return firstPageCase;
     }
 
-
     SecondPageCase analyzeCompareButtonForSecondPage()throws Exception{
         log.append("analyzeCompareButtonForSecondPage ()\n");
         analyzeCompareButtonElements();
@@ -238,17 +246,6 @@ public class AnalyzeHtml {
         return secondPageCase;
     }
 
-    void performCaseOneOfSecondPage()throws Exception{
-        getDocFromComparePageFromButtonWithSharp(product_id, product_imgsignature, nclickavalue);
-        priceHtmlText = getPriceElementsFromDoc("_price_reload");
-        setPrice(priceHtmlText);
-    }
-
-    void performCaseTwoOfSecondPage()throws Exception{
-        getDocFromComparePageFromButtonWithoutSharp(href);
-        priceHtmlText = getPriceElementsFromDoc("price");
-        setPrice(priceHtmlText);
-    }
 
     void analyzeCompareButtonElements(){
         System.out.println("priceElements : " + priceElements.first().toString());

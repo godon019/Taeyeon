@@ -46,7 +46,7 @@ public class LoadFromExcel {
             }
         }
 
-        products.setNullValuesOfProductToProperValues();
+        products.initializeNullValuesOfProductToProperValuesWithPrimeProduct();
     }
 
     private ArrayList<String> getListOfSpecificColumnContents(String columnName) throws Exception{
