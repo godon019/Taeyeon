@@ -4,6 +4,8 @@ import godon.Analyze.AnalyzingWholeProductHtml;
 import godon.Environment.Directories;
 import godon.MainFlow.LoadFromExcel;
 import godon.MainFlow.SaveToExcel;
+import godon.Product.ComparableProduct;
+import godon.Product.Product;
 import godon.Product.Products;
 
 /**
@@ -18,6 +20,8 @@ public class LoadAnalyzeAndSave {
     public void perform(){
         LoadFromExcel LoadFromExcel = new LoadFromExcel();
         Products products = LoadFromExcel.getProducts(directories.getLoadDirectory());
+
+
 
         AnalyzingWholeProductHtml analyzingWholeProductHtml = new AnalyzingWholeProductHtml();
         try {

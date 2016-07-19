@@ -5,30 +5,27 @@ import java.util.ArrayList;
 /**
  * Created by Godon on 2016-07-04.
  */
-public class Products {
-
-    ArrayList<Product> productArr;
+public class Products extends ProductArrayFunctions{
 
     public ArrayList<Product> getProductArr() {
         return productArr;
     }
 
     public Products(){
+        super();
+    }
 
-        productArr = new ArrayList<Product>();
-        productArr.add(new Product("일련번호", Product.IOType.WRITE_ONLY));
-        productArr.add(new ComparableProduct("모델명", Product.IOType.READ_AND_WRITE, ComparableProduct.ValueType.STRING));
-        productArr.add(new ComparableProduct("최저가", Product.IOType.READ_AND_WRITE, ComparableProduct.ValueType.NUMBER));
-        productArr.add(new ComparableProduct("갱신된 최저가", Product.IOType.WRITE_ONLY, ComparableProduct.ValueType.NUMBER));
-        productArr.add(new Product("로그", Product.IOType.WRITE_ONLY));
+    public void setPrimitiveProduct(String name) {
+        int hasName = setPrimitiveProductAndGetNumbersOfIt(name);
         try {
-            setPrimitiveProduct("모델명");
-        } catch (Exception e) {
+            throwExceptionIfthereareNotProperPrimitiveProductNumbers(name, hasName);
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    void setPrimitiveProduct(String name) throws Exception{
+    int setPrimitiveProductAndGetNumbersOfIt(String name){
         int hasName = 0;
         for(Product product : productArr){
             if(product.getName().equals(name)){
@@ -36,7 +33,10 @@ public class Products {
                 product.setItAsPrimitive();
             }
         }
+        return hasName;
+    }
 
+    void throwExceptionIfthereareNotProperPrimitiveProductNumbers(String name, int hasName) throws Exception{
         if(hasName == 0){
             throw new Exception("Primitive 를 설정할  Name : " + name + " 을 가진 Product 가 없습니다");
         }
@@ -44,7 +44,6 @@ public class Products {
             throw new Exception("Primitive 를 설정할  Name : " + name + " 을 가진 Product 가 여러개 입니다");
         }
     }
-
 
     public void initializeNullValuesOfProductToProperValuesWithPrimeProduct() throws Exception{
 
@@ -57,7 +56,7 @@ public class Products {
         Product productToReturn = null;
         int primeProductCount = 0;
         for(Product product : productArr){
-            if(product instanceof PrimeProduct){
+            if(product.isPrimitive()){
                 productToReturn = product;
                 primeProductCount++;
             }

@@ -1,5 +1,6 @@
 package godon.MainFlow;
 
+import godon.Product.ComparableProduct;
 import godon.Product.Product;
 import godon.Product.Products;
 import org.apache.poi.ss.usermodel.*;
@@ -20,6 +21,12 @@ public class LoadFromExcel {
 
     public Products getProducts(String directory) {
         products = new Products();
+        products.addProduct(new Product("일련번호", Product.IOType.WRITE_ONLY));
+        products.addProduct(new ComparableProduct("모델명", Product.IOType.READ_AND_WRITE, ComparableProduct.ValueType.STRING));
+        products.addProduct(new ComparableProduct("최저가", Product.IOType.READ_AND_WRITE, ComparableProduct.ValueType.NUMBER));
+        products.addProduct(new ComparableProduct("갱신된 최저가", Product.IOType.WRITE_ONLY, ComparableProduct.ValueType.NUMBER));
+        products.addProduct(new Product("로그", Product.IOType.WRITE_ONLY));
+        products.setPrimitiveProduct("모델명");
 
         try {
             openFile(directory);
