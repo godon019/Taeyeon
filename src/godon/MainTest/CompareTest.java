@@ -14,8 +14,8 @@ import static godon.ProductColumn.ComparedDebugColumn.STANDARD_ERROR_MESSEGE;
 public class CompareTest {
     //get two columns
     //make excel log of comparing test
-    ComparableColumn product1;
-    ComparableColumn product2;
+    ComparableColumn column1;
+    ComparableColumn column2;
     ComparedDebugColumn comparedDebugProduct;
 
     String productName;
@@ -25,16 +25,17 @@ public class CompareTest {
 
     }
 
-    public boolean areTheySame(ComparableColumn product1, ComparableColumn product2){
-        this.product1 = product1;
-        this.product2 = product2;
-        initializeDebuggingProduct(product1);
+    public boolean areTheySame(ComparableColumn column1, ComparableColumn column2){
+        this.column1 = column1;
+        this.column2 = column2;
+        ComparableColumn standardColumn = column1;
+        initializeDebuggingProductWith(standardColumn);
         doMainInspection();
         System.out.println("결과 : " + !comparedDebugProduct.hasError());
         return !(comparedDebugProduct.hasError());
     }
 
-    void initializeDebuggingProduct(Column column){
+    void initializeDebuggingProductWith(Column column){
         ArrayList<String> arrayList = new ArrayList<>();
         for(int i = 0; i < column.getValues().size(); i++){
             arrayList.add("Not renewed yet");
@@ -51,9 +52,9 @@ public class CompareTest {
         try {
             getValueTypeAndNameIfTheyAreSame();
             assertTwoProductsHaveSameSize();
-            for (int i = 0; i < product1.getValues().size(); i++) {
-                String ori = product1.getValues().get(i);
-                String comp = product2.getValues().get(i);
+            for (int i = 0; i < column1.getValues().size(); i++) {
+                String ori = column1.getValues().get(i);
+                String comp = column2.getValues().get(i);
                 comparedDebugProduct.getValues().set(i, createInspectedRow(ori, comp));
             }
             comparedDebugProduct.debuggingIsDone();
@@ -70,8 +71,8 @@ public class CompareTest {
 
     void getValueTypeAndNameIfTheyAreSame()throws Exception{
         assertThoseProductsHasSameNameAndType();
-        productName = product1.getName();
-        productValueType = product1.getValueType();
+        productName = column1.getName();
+        productValueType = column1.getValueType();
     }
 
     void assertThoseProductsHasSameNameAndType()throws Exception{
@@ -81,19 +82,19 @@ public class CompareTest {
     }
 
     void assertSameName()throws Exception{
-        if(product1.getName() != product2.getName()){
+        if(column1.getName() != column2.getName()){
             throw new Exception("비교할 두 product의 이름이 다릅니다");
         }
     }
 
     void assertSameType()throws Exception{
-        if(product1.getValueType() != product2.getValueType()){
+        if(column1.getValueType() != column2.getValueType()){
             throw new Exception("비교할 두 product의 타입이 다릅니다");
         }
     }
 
     void assertTwoProductsHaveSameSize()throws Exception{
-        if(product1.getValues().size() != product2.getValues().size()){
+        if(column1.getValues().size() != column2.getValues().size()){
             throw new Exception("Two columns have different values's size");
         }
     }
@@ -131,9 +132,11 @@ public class CompareTest {
         float minRange = ori-tmp;
         System.out.println("string origin : "+ origin + ", string comparable : " + comparable + ", ori : " + ori + " comp : " + comp + " maxRange : " + maxRange + " minRange : " + minRange + "\n");
         if( (maxRange >= comp) && (minRange <= comp) ){
+            System.out.println("In acceptable range");
             return "In acceptable range";
         }
         else {
+            System.out.println(STANDARD_ERROR_MESSEGE + " : Numbers are over offset range");
             return STANDARD_ERROR_MESSEGE + " : Numbers are over offset range";
         }
     }

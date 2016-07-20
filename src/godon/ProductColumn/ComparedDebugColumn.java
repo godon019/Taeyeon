@@ -17,7 +17,7 @@ public class ComparedDebugColumn extends Column {
     Status status;
 
     public ComparedDebugColumn(Column column) {
-        super(column.getName(), column.getiOType());
+        super(column.getName());
         status = Status.NOT_DEBUGGED_YET;
     }
 

@@ -22,7 +22,11 @@ public class SaveToExcel {
 
     public Columns columns;
 
-    public void saveProducts(String directory){
+    public SaveToExcel(Columns columns){
+        this.columns = columns;
+    }
+
+    public void saveColumnsTo(String directory){
         //Workbook wb = new HSSFWorkbook();
         try {
             wb = new XSSFWorkbook();
@@ -45,10 +49,8 @@ public class SaveToExcel {
     void writeExcelWithProducts()throws Exception{
         int columnPosition = 0;
         for(Column column : columns.getProductArr()){
-            if(column.isWritable()){
-                setColumnWithArray(columnPosition, column.getName(), column.getValues());
-                columnPosition++;
-            }
+            setColumnWithArray(columnPosition, column.getName(), column.getValues());
+            columnPosition++;
         }
     }
 

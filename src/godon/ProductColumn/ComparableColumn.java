@@ -10,8 +10,8 @@ public class ComparableColumn extends Column {
     }
     ValueType valueType;
 
-    public ComparableColumn(String name, IOType iOType, ValueType valueType) {
-        super(name, iOType);
+    public ComparableColumn(String name, ValueType valueType) {
+        super(name);
         this.valueType = valueType;
     }
 

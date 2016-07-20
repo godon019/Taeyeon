@@ -27,8 +27,6 @@ public class Taeyeon{
 
         LoadAnalyzeAndSave loadAnalyzeAndSave = new LoadAnalyzeAndSave(directories);
         loadAnalyzeAndSave.perform();
-
-
     }
 }
 

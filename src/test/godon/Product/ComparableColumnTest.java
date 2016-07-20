@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 public class ComparableColumnTest {
     @Test
     public void getValueType() throws Exception {
-        Column column = new ComparableColumn("모델명", Column.IOType.READ_AND_WRITE, ComparableColumn.ValueType.STRING);
+        Column column = new ComparableColumn("모델명",ComparableColumn.ValueType.STRING);
         ComparableColumn comparableProduct = (ComparableColumn) column;
 
         assertEquals(comparableProduct.getValueType(), ComparableColumn.ValueType.STRING);

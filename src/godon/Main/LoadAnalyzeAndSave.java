@@ -4,6 +4,7 @@ import godon.Analyze.AnalyzingWholeProductHtml;
 import godon.Environment.Directories;
 import godon.MainFlow.LoadFromExcel;
 import godon.MainFlow.SaveToExcel;
+import godon.ProductColumn.ColumnSetter;
 import godon.ProductColumn.Columns;
 
 /**
@@ -16,21 +17,23 @@ public class LoadAnalyzeAndSave {
     }
 
     public void perform(){
-        LoadFromExcel LoadFromExcel = new LoadFromExcel();
-        Columns columns = LoadFromExcel.getProducts(directories.getLoadDirectory());
+        Columns columnsToLoad = new Columns();
+        ColumnSetter.setForLoading(columnsToLoad);
+        LoadFromExcel LoadFromExcel = new LoadFromExcel(columnsToLoad);
+        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
 
-
+        Columns columnsToSave = new Columns();
+        ColumnSetter.setForSaving(columnsToSave);
 
         AnalyzingWholeProductHtml analyzingWholeProductHtml = new AnalyzingWholeProductHtml();
         try {
-            columns.setProductArr("로그", analyzingWholeProductHtml.performAll(columns.getProductArr("모델명").getValues()));
+            columnsToSave.setColumn("로그", analyzingWholeProductHtml.performAll(columnsToLoad.getColumn("모델명").getValues()));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        SaveToExcel saveToExcel = new SaveToExcel();
-        saveToExcel.columns = columns;
-        saveToExcel.saveProducts(directories.getSaveDirectory());
+        SaveToExcel saveToExcel = new SaveToExcel(columnsToSave);
+        saveToExcel.saveColumnsTo(directories.getSaveDirectory());
 
     }
 }

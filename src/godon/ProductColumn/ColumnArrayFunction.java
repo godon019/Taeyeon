@@ -9,7 +9,7 @@ public class ColumnArrayFunction {
     protected ArrayList<Column> columnArr;
 
     ColumnArrayFunction(){
-        columnArr = new ArrayList<>();
+        columnArr = new ArrayList<Column>();
     }
 
     public void addProduct(Column column){

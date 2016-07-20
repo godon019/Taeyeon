@@ -5,6 +5,7 @@ import godon.MainFlow.LoadFromExcel;
 import godon.MainFlow.SaveToExcel;
 import godon.MainTest.CompareTest;
 import godon.ProductColumn.Column;
+import godon.ProductColumn.ColumnSetter;
 import godon.ProductColumn.Columns;
 import godon.ProductColumn.ComparableColumn;
 import org.junit.Test;
@@ -24,8 +25,8 @@ public class TaeyeonTest {
     @Test
     public void productEqualsTestForStringType(){
         //Given
-        Column column = new ComparableColumn("okay", Column.IOType.READ_AND_WRITE, ComparableColumn.ValueType.STRING);
-        Column column2 = new ComparableColumn("okay", Column.IOType.READ_AND_WRITE, ComparableColumn.ValueType.STRING);
+        Column column = new ComparableColumn("okay", ComparableColumn.ValueType.STRING);
+        Column column2 = new ComparableColumn("okay", ComparableColumn.ValueType.STRING);
         ArrayList<String> arr = new ArrayList<String>();
         ArrayList<String> arr2 = new ArrayList<String>();
 
@@ -68,8 +69,8 @@ public class TaeyeonTest {
     @Test
     public void productEqualsTestForNumberType(){
         //Given
-        Column column = new ComparableColumn("okay", Column.IOType.READ_AND_WRITE, ComparableColumn.ValueType.NUMBER);
-        Column column2 = new ComparableColumn("okay", Column.IOType.READ_AND_WRITE, ComparableColumn.ValueType.NUMBER);
+        Column column = new ComparableColumn("okay", ComparableColumn.ValueType.NUMBER);
+        Column column2 = new ComparableColumn("okay", ComparableColumn.ValueType.NUMBER);
         ArrayList<String> arr = new ArrayList<String>();
         ArrayList<String> arr2 = new ArrayList<String>();
 
@@ -117,32 +118,38 @@ public class TaeyeonTest {
 
     }
 
+
+
     @Test
     public void productEqualsTest2(){
 
         //Get Test directory and set columns
         Directories directories = new Directories(null, null);
         directories.setLoadDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - 복사본.xlsx");
-        LoadFromExcel LoadFromExcel = new LoadFromExcel();
-        Columns columns = LoadFromExcel.getProducts(directories.getLoadDirectory());
+        Columns columnsToLoad1 = new Columns();
+        ColumnSetter.setForLoading(columnsToLoad1);
+        LoadFromExcel LoadFromExcel = new LoadFromExcel(columnsToLoad1);
+        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
 
         //Get Real directory and set columns
         directories.setLoadDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2.xlsx");
-        directories.setSaveDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - compare.xlsx");
-        Columns columns2 = LoadFromExcel.getProducts(directories.getLoadDirectory());
+        Columns columnsToLoad2 = new Columns();
+        ColumnSetter.setForLoading(columnsToLoad2);
+        LoadFromExcel = new LoadFromExcel(columnsToLoad2);
+        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
 
 
         Column column1 = null;
         Column column2 = null;
         String nameToGet = "최저가";
         try {
-            column1 = columns.getProductArr(nameToGet);
+            column1 = columnsToLoad1.getColumn(nameToGet);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            column2 = columns.getProductArr(nameToGet);
+            column2 = columnsToLoad2.getColumn(nameToGet);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -157,10 +164,72 @@ public class TaeyeonTest {
         debugColumns.addProduct(column2);
         debugColumns.addProduct(compareTest.getComparedDebugProduct());
 
-        SaveToExcel saveToExcel = new SaveToExcel();
-        saveToExcel.columns = debugColumns;
-        saveToExcel.saveProducts(directories.getSaveDirectory());
+
+        directories.setSaveDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - compare.xlsx");
+        SaveToExcel saveToExcel = new SaveToExcel(debugColumns);
+        saveToExcel.saveColumnsTo(directories.getSaveDirectory());
 
     }
 
+
+    @Test
+    public void productEqualsTest3(){
+
+        //Get Test directory and set columns
+        Directories directories = new Directories(null, null);
+
+        directories.setLoadDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - 복사본.xlsx");
+        Columns columnsToLoad1 = new Columns();
+        ColumnSetter.setForLoading(columnsToLoad1);
+        LoadFromExcel LoadFromExcel = new LoadFromExcel(columnsToLoad1);
+        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
+
+        //Get Real directory and set columns
+        directories.setLoadDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - 복사본.xlsx");
+        Columns columnsToLoad2 = new Columns();
+        ColumnSetter.setForLoading(columnsToLoad2);
+        LoadFromExcel = new LoadFromExcel(columnsToLoad2);
+        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
+
+
+        Column column1 = null;
+        Column column2 = null;
+        String nameToGet = "최저가";
+        try {
+            column1 = columnsToLoad1.getColumn(nameToGet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            column2 = columnsToLoad2.getColumn(nameToGet);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        assertNotNull(column1);
+        assertNotNull(column2);
+
+        //When : it should be different with this number
+        column1.getValues().set(0, "500");
+        column2.getValues().set(0, "100");
+
+        for(int i=0; i<5; i+=1){
+            System.out.println("값 비교 전 테스트  : "+ column1.getValues().get(i)+ ", "+column2.getValues().get(i));
+        }
+
+        CompareTest compareTest = new CompareTest();
+        assertFalse(compareTest.areTheySame((ComparableColumn) column1, (ComparableColumn) column2));
+
+        Columns debugColumns = new Columns();
+        debugColumns.addProduct(column1);
+        debugColumns.addProduct(column2);
+        debugColumns.addProduct(compareTest.getComparedDebugProduct());
+
+
+        directories.setSaveDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - compare.xlsx");
+        SaveToExcel saveToExcel = new SaveToExcel(debugColumns);
+        saveToExcel.saveColumnsTo(directories.getSaveDirectory());
+
+    }
 }
