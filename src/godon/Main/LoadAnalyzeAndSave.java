@@ -4,9 +4,7 @@ import godon.Analyze.AnalyzingWholeProductHtml;
 import godon.Environment.Directories;
 import godon.MainFlow.LoadFromExcel;
 import godon.MainFlow.SaveToExcel;
-import godon.Product.ComparableProduct;
-import godon.Product.Product;
-import godon.Product.Products;
+import godon.ProductColumn.Columns;
 
 /**
  * Created by Godon on 2016-07-15.
@@ -19,19 +17,19 @@ public class LoadAnalyzeAndSave {
 
     public void perform(){
         LoadFromExcel LoadFromExcel = new LoadFromExcel();
-        Products products = LoadFromExcel.getProducts(directories.getLoadDirectory());
+        Columns columns = LoadFromExcel.getProducts(directories.getLoadDirectory());
 
 
 
         AnalyzingWholeProductHtml analyzingWholeProductHtml = new AnalyzingWholeProductHtml();
         try {
-            products.setProductArr("로그", analyzingWholeProductHtml.performAll(products.getProductArr("모델명").getValues()));
+            columns.setProductArr("로그", analyzingWholeProductHtml.performAll(columns.getProductArr("모델명").getValues()));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         SaveToExcel saveToExcel = new SaveToExcel();
-        saveToExcel.products = products;
+        saveToExcel.columns = columns;
         saveToExcel.saveProducts(directories.getSaveDirectory());
 
     }

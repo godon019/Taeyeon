@@ -1,31 +1,31 @@
 package godon.MainTest;
 
-import godon.Product.ComparableProduct;
-import godon.Product.ComparedDebugProduct;
-import godon.Product.Product;
+import godon.ProductColumn.ComparableColumn;
+import godon.ProductColumn.ComparedDebugColumn;
+import godon.ProductColumn.Column;
 
 import java.util.ArrayList;
 
-import static godon.Product.ComparedDebugProduct.STANDARD_ERROR_MESSEGE;
+import static godon.ProductColumn.ComparedDebugColumn.STANDARD_ERROR_MESSEGE;
 
 /**
  * Created by Godon on 2016-07-18.
  */
 public class CompareTest {
-    //get two products
+    //get two columns
     //make excel log of comparing test
-    ComparableProduct product1;
-    ComparableProduct product2;
-    ComparedDebugProduct comparedDebugProduct;
+    ComparableColumn product1;
+    ComparableColumn product2;
+    ComparedDebugColumn comparedDebugProduct;
 
     String productName;
-    ComparableProduct.ValueType productValueType;
+    ComparableColumn.ValueType productValueType;
 
     public CompareTest(){
 
     }
 
-    public boolean areTheySame(ComparableProduct product1, ComparableProduct product2){
+    public boolean areTheySame(ComparableColumn product1, ComparableColumn product2){
         this.product1 = product1;
         this.product2 = product2;
         initializeDebuggingProduct(product1);
@@ -34,16 +34,16 @@ public class CompareTest {
         return !(comparedDebugProduct.hasError());
     }
 
-    void initializeDebuggingProduct(Product product){
+    void initializeDebuggingProduct(Column column){
         ArrayList<String> arrayList = new ArrayList<>();
-        for(int i =0 ; i <product.getValues().size(); i++){
+        for(int i = 0; i < column.getValues().size(); i++){
             arrayList.add("Not renewed yet");
         }
-        comparedDebugProduct = new ComparedDebugProduct(product);
+        comparedDebugProduct = new ComparedDebugColumn(column);
         comparedDebugProduct.setValues(arrayList);
     }
 
-    public ComparedDebugProduct getComparedDebugProduct(){
+    public ComparedDebugColumn getComparedDebugProduct(){
         return comparedDebugProduct;
     }
 
@@ -94,7 +94,7 @@ public class CompareTest {
 
     void assertTwoProductsHaveSameSize()throws Exception{
         if(product1.getValues().size() != product2.getValues().size()){
-            throw new Exception("Two products have different values's size");
+            throw new Exception("Two columns have different values's size");
         }
     }
 
@@ -104,10 +104,10 @@ public class CompareTest {
 
     String getResultOfComparingCell(String ori, String comp) throws Exception{
         //go to branches of each valuetype and compare
-        if(productValueType == ComparableProduct.ValueType.STRING){
+        if(productValueType == ComparableColumn.ValueType.STRING){
             return areSameString(ori, comp);
         }
-        else if(productValueType == ComparableProduct.ValueType.NUMBER){
+        else if(productValueType == ComparableColumn.ValueType.NUMBER){
             return areNumbersInAcceptableRange(ori, comp);
         }
         else{

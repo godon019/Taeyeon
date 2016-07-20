@@ -1,8 +1,8 @@
 package godon.MainFlow;
 
-import godon.Product.ComparableProduct;
-import godon.Product.Product;
-import godon.Product.Products;
+import godon.ProductColumn.Column;
+import godon.ProductColumn.Columns;
+import godon.ProductColumn.ComparableColumn;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.FileInputStream;
@@ -17,16 +17,16 @@ public class LoadFromExcel {
     private final int CONTENTS_START_WITHOUT_COLUMN_TITLE = 1;
     private Workbook wb;
     private Sheet sheet;
-    private Products products;
+    private Columns columns;
 
-    public Products getProducts(String directory) {
-        products = new Products();
-        products.addProduct(new Product("일련번호", Product.IOType.WRITE_ONLY));
-        products.addProduct(new ComparableProduct("모델명", Product.IOType.READ_AND_WRITE, ComparableProduct.ValueType.STRING));
-        products.addProduct(new ComparableProduct("최저가", Product.IOType.READ_AND_WRITE, ComparableProduct.ValueType.NUMBER));
-        products.addProduct(new ComparableProduct("갱신된 최저가", Product.IOType.WRITE_ONLY, ComparableProduct.ValueType.NUMBER));
-        products.addProduct(new Product("로그", Product.IOType.WRITE_ONLY));
-        products.setPrimitiveProduct("모델명");
+    public Columns getProducts(String directory) {
+        columns = new Columns();
+        columns.addProduct(new Column("일련번호", Column.IOType.WRITE_ONLY));
+        columns.addProduct(new ComparableColumn("모델명", Column.IOType.READ_AND_WRITE, ComparableColumn.ValueType.STRING));
+        columns.addProduct(new ComparableColumn("최저가", Column.IOType.READ_AND_WRITE, ComparableColumn.ValueType.NUMBER));
+        columns.addProduct(new ComparableColumn("갱신된 최저가", Column.IOType.WRITE_ONLY, ComparableColumn.ValueType.NUMBER));
+        columns.addProduct(new Column("로그", Column.IOType.WRITE_ONLY));
+        columns.setPrimitiveProduct("모델명");
 
         try {
             openFile(directory);
@@ -37,7 +37,7 @@ public class LoadFromExcel {
             e.printStackTrace();
         }
 
-        return products;
+        return columns;
     }
 
 
@@ -47,13 +47,13 @@ public class LoadFromExcel {
     }
 
     private void setProductArr() throws Exception{
-        for(Product product : products.getProductArr()){
-            if(product.isReadable()) {
-                product.setValues(getListOfSpecificColumnContents(product.getName()));
+        for(Column column : columns.getProductArr()){
+            if(column.isReadable()) {
+                column.setValues(getListOfSpecificColumnContents(column.getName()));
             }
         }
 
-        products.initializeNullValuesOfProductToProperValuesWithPrimeProduct();
+        columns.initializeNullValuesOfProductToProperValuesWithPrimeProduct();
     }
 
     private ArrayList<String> getListOfSpecificColumnContents(String columnName) throws Exception{

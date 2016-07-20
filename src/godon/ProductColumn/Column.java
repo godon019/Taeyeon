@@ -1,11 +1,11 @@
-package godon.Product;
+package godon.ProductColumn;
 
 import java.util.ArrayList;
 
 /**
  * Created by Godon on 2016-07-07.
  */
-public class Product {
+public class Column {
     public enum IOType{
         READ_ONLY,
         WRITE_ONLY,
@@ -17,11 +17,11 @@ public class Product {
     ArrayList<String> values;
     Boolean isPrimitive;
 
-    public Product(){
+    public Column(){
 
     }
 
-    public Product(String name, IOType iOType) {
+    public Column(String name, IOType iOType) {
         this.name = name;
         this.iOType = iOType;
         this.values = null;

@@ -1,9 +1,9 @@
-package godon.Product;
+package godon.ProductColumn;
 
 /**
  * Created by Godon on 2016-07-18.
  */
-public class ComparedDebugProduct extends Product {
+public class ComparedDebugColumn extends Column {
 
     public static String STANDARD_ERROR_MESSEGE = "Compare Debug Error";
 
@@ -16,8 +16,8 @@ public class ComparedDebugProduct extends Product {
     }
     Status status;
 
-    public ComparedDebugProduct(Product product) {
-        super(product.getName(), product.getiOType());
+    public ComparedDebugColumn(Column column) {
+        super(column.getName(), column.getiOType());
         status = Status.NOT_DEBUGGED_YET;
     }
 

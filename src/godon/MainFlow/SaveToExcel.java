@@ -1,7 +1,7 @@
 package godon.MainFlow;
 
-import godon.Product.Product;
-import godon.Product.Products;
+import godon.ProductColumn.Column;
+import godon.ProductColumn.Columns;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -20,7 +20,7 @@ public class SaveToExcel {
     Row row;
     Cell cell;
 
-    public Products products;
+    public Columns columns;
 
     public void saveProducts(String directory){
         //Workbook wb = new HSSFWorkbook();
@@ -44,9 +44,9 @@ public class SaveToExcel {
 
     void writeExcelWithProducts()throws Exception{
         int columnPosition = 0;
-        for(Product product : products.getProductArr()){
-            if(product.isWritable()){
-                setColumnWithArray(columnPosition, product.getName(), product.getValues());
+        for(Column column : columns.getProductArr()){
+            if(column.isWritable()){
+                setColumnWithArray(columnPosition, column.getName(), column.getValues());
                 columnPosition++;
             }
         }
