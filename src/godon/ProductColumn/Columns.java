@@ -85,24 +85,34 @@ public class Columns extends ColumnArrayFunction {
     }
 
 
-    public void setColumn(String name, ArrayList<String> value) throws Exception{
+    public void setColumn(String name, ArrayList<String> value){
         for(Column column : columnArr){
-           if(column.getName().equals(name)){
-               column.setValues(value);
-               return;
-           }
+            if(column.getName().equals(name)){
+                column.setValues(value);
+                return;
+            }
         }
-        throw new Exception("해당 하는 이름 :" +name+" 의 set할 Product가 존재 하지 않습니다");
+        try {
+            throw new Exception("해당 하는 이름 :" +name+" 의 set할 Product가 존재 하지 않습니다");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
-    public Column getColumn(String name)throws Exception{
-            for (Column column : columnArr) {
-                if (column.getName().equals(name)) {
-                    return column;
-                }
+    public Column getColumn(String name){
+        for (Column column : columnArr) {
+            if (column.getName().equals(name)) {
+                return column;
             }
-        throw new Exception("해당 하는 이름 :" +name+" 의 get할 Product가 존재 하지 않습니다");
-
+        }
+        try {
+            throw new Exception("해당 하는 이름 :" + name + " 의 get할 Product가 존재 하지 않습니다");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

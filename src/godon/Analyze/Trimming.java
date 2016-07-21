@@ -39,7 +39,7 @@ public class Trimming {
         return name_tmp;
     }
 
-    String trimPrice(String lowPrice){
+    public static String trimPrice(String lowPrice){
 
         String tmp = lowPrice.replace("모바일가격 ", "");
 

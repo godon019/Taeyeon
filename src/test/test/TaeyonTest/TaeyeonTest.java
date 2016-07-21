@@ -121,75 +121,19 @@ public class TaeyeonTest {
 
 
     @Test
-    public void productEqualsTest2(){
-
-        //Get Test directory and set columns
-        Directories directories = new Directories(null, null);
-        directories.setLoadDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - 복사본.xlsx");
-        Columns columnsToLoad1 = new Columns();
-        ColumnSetter.setForLoading(columnsToLoad1);
-        LoadFromExcel LoadFromExcel = new LoadFromExcel(columnsToLoad1);
-        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
-
-        //Get Real directory and set columns
-        directories.setLoadDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2.xlsx");
-        Columns columnsToLoad2 = new Columns();
-        ColumnSetter.setForLoading(columnsToLoad2);
-        LoadFromExcel = new LoadFromExcel(columnsToLoad2);
-        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
-
-
-        Column column1 = null;
-        Column column2 = null;
-        String nameToGet = "최저가";
-        try {
-            column1 = columnsToLoad1.getColumn(nameToGet);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            column2 = columnsToLoad2.getColumn(nameToGet);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        assertNotNull(column1);
-        assertNotNull(column2);
-        CompareTest compareTest = new CompareTest();
-        assertTrue(compareTest.areTheySame((ComparableColumn) column1, (ComparableColumn) column2));
-
-        Columns debugColumns = new Columns();
-        debugColumns.addProduct(column1);
-        debugColumns.addProduct(column2);
-        debugColumns.addProduct(compareTest.getComparedDebugProduct());
-
-
-        directories.setSaveDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - compare.xlsx");
-        SaveToExcel saveToExcel = new SaveToExcel(debugColumns);
-        saveToExcel.saveColumnsTo(directories.getSaveDirectory());
-
-    }
-
-
-    @Test
     public void productEqualsTest3(){
 
-        //Get Test directory and set columns
-        Directories directories = new Directories(null, null);
 
-        directories.setLoadDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - 복사본.xlsx");
+        LoadFromExcel loadFromExcel = new LoadFromExcel();
+        //Get Test directory and set columns
         Columns columnsToLoad1 = new Columns();
         ColumnSetter.setForLoading(columnsToLoad1);
-        LoadFromExcel LoadFromExcel = new LoadFromExcel(columnsToLoad1);
-        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
+        loadFromExcel.getColumns(columnsToLoad1, Directories.loadTestExcel);
 
         //Get Real directory and set columns
-        directories.setLoadDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - 복사본.xlsx");
         Columns columnsToLoad2 = new Columns();
         ColumnSetter.setForLoading(columnsToLoad2);
-        LoadFromExcel = new LoadFromExcel(columnsToLoad2);
-        LoadFromExcel.getColumnsFrom(directories.getLoadDirectory());
+        loadFromExcel.getColumns(columnsToLoad2, Directories.loadTestExcel);
 
 
         Column column1 = null;
@@ -209,6 +153,9 @@ public class TaeyeonTest {
 
         assertNotNull(column1);
         assertNotNull(column2);
+
+        CompareTest compareTest = new CompareTest();
+        assertTrue(compareTest.areTheySame((ComparableColumn) column1, (ComparableColumn) column2));
 
         //When : it should be different with this number
         column1.getValues().set(0, "500");
@@ -218,18 +165,19 @@ public class TaeyeonTest {
             System.out.println("값 비교 전 테스트  : "+ column1.getValues().get(i)+ ", "+column2.getValues().get(i));
         }
 
-        CompareTest compareTest = new CompareTest();
+
         assertFalse(compareTest.areTheySame((ComparableColumn) column1, (ComparableColumn) column2));
 
         Columns debugColumns = new Columns();
-        debugColumns.addProduct(column1);
-        debugColumns.addProduct(column2);
-        debugColumns.addProduct(compareTest.getComparedDebugProduct());
+        debugColumns.addColumn(column1);
+        debugColumns.addColumn(column2);
+        debugColumns.addColumn(compareTest.getComparedDebugProduct());
 
 
-        directories.setSaveDirectory("E:\\LIBRARY\\Desktop\\작업\\2016-06-28 태연이 프로그램\\테스트2 - compare.xlsx");
         SaveToExcel saveToExcel = new SaveToExcel(debugColumns);
-        saveToExcel.saveColumnsTo(directories.getSaveDirectory());
+        saveToExcel.saveColumnsTo(Directories.compareExcel);
 
     }
+
+
 }

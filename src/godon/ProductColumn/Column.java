@@ -7,13 +7,11 @@ import java.util.ArrayList;
  */
 public class Column {
 
-
     String name;
     ArrayList<String> values;
     Boolean isPrimitive;
 
     public Column(){
-
     }
 
     public Column(String name) {
@@ -39,7 +37,6 @@ public class Column {
     }
 
     public String getName() {
-
         return name;
     }
 

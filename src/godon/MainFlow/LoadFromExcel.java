@@ -18,11 +18,12 @@ public class LoadFromExcel {
     private Sheet sheet;
     private Columns columns;
 
-    public LoadFromExcel(Columns columns){
-        this.columns = columns;
+    public LoadFromExcel(){
     }
 
-    public void getColumnsFrom(String directory) {
+
+    public void getColumns(Columns columns, String directory) {
+        this.columns = columns;
         try {
             openFile(directory);
             //New

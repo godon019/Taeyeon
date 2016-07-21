@@ -76,7 +76,7 @@ public class AnalyzeHtml {
     boolean hasSearchResultFromFirstPage(String name){
         doc = getDocFromLink("http://shopping.naver.com/search/all.nhn?query=" + name + "&cat_id=&frm=NVSHATC");
         if(hasNoSearchResult(doc)){
-            setPrice("검색 결과 없음");
+            addPriceToLog("검색 결과 없음");
             return false;
         }
         return true;
@@ -85,7 +85,7 @@ public class AnalyzeHtml {
     void getInformationFromFirstPage(){
         try {
             priceHtmlText = getPriceElementsFromDoc("price");
-            setPrice(priceHtmlText);
+            addPriceToLog(priceHtmlText);
             log.append("Category depth : " + getCategoryDepthElementsFromDoc("depth") + "\n");
             getProductTitleFromDoc();
         }
@@ -177,13 +177,13 @@ public class AnalyzeHtml {
     void performCaseOneOfSecondPage()throws Exception{
         getDocFromComparePageFromButtonWithSharp(product_id, product_imgsignature, nclickavalue);
         priceHtmlText = getPriceElementsFromDoc("_price_reload");
-        setPrice(priceHtmlText);
+        addPriceToLog(priceHtmlText);
     }
 
     void performCaseTwoOfSecondPage()throws Exception{
         getDocFromComparePageFromButtonWithoutSharp(href);
         priceHtmlText = getPriceElementsFromDoc("price");
-        setPrice(priceHtmlText);
+        addPriceToLog(priceHtmlText);
     }
 
     Document getDocFromLink(String link){
@@ -203,14 +203,14 @@ public class AnalyzeHtml {
         if(priceHtmlText.contains("~")){
             log.append("case 1 : 이름에 ~ 있는 경우 ~제외하고 앞쪽 가격으로 최종가격 결정\n");
             String [] priceOfWhole = priceHtmlText.split(" ~ ");
-            setPrice(priceOfWhole[0]);
+            addPriceToLog(priceOfWhole[0]);
             firstPageCase = FirstPageCase.PRICE_HAS_WAVE_CHARACTER;
             secondPageCase = SecondPageCase.NOT_SECOND_CASE;
         }
         else if(priceHtmlText.contains("가격비교") && priceHtmlText.contains("~")){
             log.append("case 1 : 이름에 ~ 있는 경우 그리고 가격비교도 있는경우 ~제외하고 앞쪽 가격으로 최종가격 결정\n");
             String [] priceOfWhole = priceHtmlText.split(" ~ ");
-            setPrice(priceOfWhole[0]);
+            addPriceToLog(priceOfWhole[0]);
             firstPageCase = FirstPageCase.PRICE_HAS_WAVE_CHARACTER;
             secondPageCase = SecondPageCase.NOT_SECOND_CASE;
         }
@@ -274,10 +274,8 @@ public class AnalyzeHtml {
         doc = getDocFromLink("http://shopping.naver.com" + href);
     }
 
-    public  void setPrice(String price){
+    public  void addPriceToLog(String price){
         log.append("Price : " + price + "\n");
     }
-
-
 
 }

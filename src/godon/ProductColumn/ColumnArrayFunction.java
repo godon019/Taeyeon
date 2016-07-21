@@ -12,11 +12,11 @@ public class ColumnArrayFunction {
         columnArr = new ArrayList<Column>();
     }
 
-    public void addProduct(Column column){
+    public void addColumn(Column column){
         columnArr.add(column);
     }
 
-    public void removeProduct(String name){
+    public void removeColumn(String name){
         for(Column column : columnArr){
             if(column.getName() == name){
                 columnArr.remove(column);

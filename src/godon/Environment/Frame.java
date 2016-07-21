@@ -11,11 +11,9 @@ import java.awt.event.ActionListener;
 public class Frame extends JFrame {
     JTextField fileToLoad, fileToSave;//클래스 변수로 선언
 
-    Directories directories;
     public boolean okayPushed = false;
 
-    public Frame(Directories directories){
-        this.directories = directories;
+    public Frame(){
         //new JFrame();생략됨 나자신이니까 쓸수 없음
 
         this.setDefaultCloseOperation(
@@ -27,8 +25,8 @@ public class Frame extends JFrame {
         this.setLayout(new GridLayout(5,2));
         add(new JLabel("  welpany"));
 
-        String defualtTextForLoadDirectory = directories.getLoadDirectory();
-        String defualtTextForSaveDirectory = directories.getSaveDirectory();
+        String defualtTextForLoadDirectory = Directories.loadDirectory;
+        String defualtTextForSaveDirectory = Directories.saveDirectory;
 
         fileToLoad = makeTextField(defualtTextForLoadDirectory);
         fileToSave = makeTextField(defualtTextForSaveDirectory);
@@ -61,17 +59,15 @@ public class Frame extends JFrame {
             //버튼을 누르면 이쪽으로 제어가 이동
             System.out.println(arg0.getActionCommand());
 
-            String n = fileToLoad.getText();
-            directories.setLoadDirectory(n);
-            System.out.println(n);
+            Directories.loadDirectory = fileToLoad.getText();
+            System.out.println(Directories.loadDirectory);
 
-            String a = fileToSave.getText();
-            directories.setSaveDirectory(a);
-            System.out.println(a);
+            Directories.saveDirectory = fileToSave.getText();
+            System.out.println(Directories.saveDirectory);
 
             okayPushed = true;
             //다이얼로그
-            JOptionPane.showMessageDialog(frame, n+"\n"+a);
+            JOptionPane.showMessageDialog(frame, Directories.loadDirectory+"\n"+Directories.saveDirectory);
 
         }
     }
