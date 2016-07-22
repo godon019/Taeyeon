@@ -1,6 +1,7 @@
 package godon.ProductColumn;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by Godon on 2016-07-19.
@@ -17,9 +18,9 @@ public class ColumnArrayFunction {
     }
 
     public void removeColumn(String name){
-        for(Column column : columnArr){
-            if(column.getName() == name){
-                columnArr.remove(column);
+        for(Iterator<Column> iterator = columnArr.iterator(); iterator.hasNext(); ){
+            if(iterator.next().getName() == name){
+                iterator.remove();
             }
         }
     }

@@ -22,11 +22,11 @@ public class ColumnArrayFunctionsTest {
 
         assertEquals("Column lists : 일련번호, 모델, 번호,", columns.toString());
 
-        columns.removeColumn("모델");
-        assertEquals("Column lists : 일련번호, 번호,", columns.toString());
+        columns.removeColumn("번호");
+        assertEquals("Column lists : 일련번호, 모델,", columns.toString());
 
         columns.addColumn(new Column("모델"));
-        assertEquals("Column lists : 일련번호, 번호, 모델,", columns.toString());
+        assertEquals("Column lists : 일련번호, 모델, 모델,", columns.toString());
     }
 
 }

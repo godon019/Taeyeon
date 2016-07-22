@@ -1,4 +1,6 @@
-package godon.Editing;
+package godon.Analyze.Log;
+
+import godon.Analyze.Log.Analyzer.LogAnalyzer;
 
 import java.util.ArrayList;
 

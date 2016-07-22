@@ -27,6 +27,8 @@ public class AnalyzeHtml {
 
     String productName;
 
+    String lastPrice;
+
     public enum FirstPageCase{
         NOT_DETERMINED_YET,
         NORMAL_PRICE,
@@ -63,6 +65,7 @@ public class AnalyzeHtml {
         }
 
         appendCasesTo(log);
+        appendLastPriceTo(log);
         return log;
     }
 
@@ -86,7 +89,7 @@ public class AnalyzeHtml {
         try {
             priceHtmlText = getPriceElementsFromDoc("price");
             addPriceToLog(priceHtmlText);
-            log.append("Category depth : " + getCategoryDepthElementsFromDoc("depth") + "\n");
+            log.append(LogData.CATEGORY + getCategoryDepthElementsFromDoc("depth") + "\n");
             getProductTitleFromDoc();
         }
         catch (Exception e){
@@ -140,13 +143,13 @@ public class AnalyzeHtml {
     void getProductTitleFromDocCaseOne(Elements elements)throws Exception{
         String titleHtmlText = elements.first().text();
         log.append("Case 1 : <li> class name is _model_list\n");
-        log.append("ProductTitle : " + titleHtmlText + "\n");
+        log.append(LogData.PRODUCT_TITLE + titleHtmlText + "\n");
     }
 
     void getProductTitleFromDocCaseTwo(Elements elements)throws Exception{
         String titleHtmlText = elements.first().text();
         log.append("Case 2 : <li> class name is _product_list\n");
-        log.append("ProductTitle : " + titleHtmlText + "\n");
+        log.append(LogData.PRODUCT_TITLE  + titleHtmlText + "\n");
     }
 
     boolean hasNoSearchResult(Document doc){
@@ -154,8 +157,8 @@ public class AnalyzeHtml {
     }
 
     void appendCasesTo(StringBuilder log){
-        log.append("FirstPageCase : " + firstPageCase + "\n");
-        log.append("SecondPageCase : " + secondPageCase + "\n");
+        log.append(LogData.FIRST_PAGE_CASE + firstPageCase + "\n");
+        log.append(LogData.SECOND_PAGE_CASE + secondPageCase + "\n");
     }
 
     void performSecondPageIfNeeded()throws Exception{
@@ -187,7 +190,7 @@ public class AnalyzeHtml {
     }
 
     Document getDocFromLink(String link){
-        log.append("링크 : " + link + "\n");
+        log.append(LogData.LINK + link + "\n");
         Document document = null;
         try {
             document = Jsoup.connect(link).get();
@@ -232,6 +235,7 @@ public class AnalyzeHtml {
 
     SecondPageCase analyzeCompareButtonForSecondPage()throws Exception{
         log.append("analyzeCompareButtonForSecondPage ()\n");
+
         analyzeCompareButtonElements();
 
         if(href.equals("#")) {
@@ -249,7 +253,8 @@ public class AnalyzeHtml {
 
     void analyzeCompareButtonElements(){
         System.out.println("priceElements : " + priceElements.first().toString());
-        element = priceElements.first().getElementsByTag("a").first();
+        //element = priceElements.first().getElementsByTag("a").first();
+        element = priceElements.select("a.btn_compare").first();
 
         System.out.println("a tag element : " + element.toString());
 
@@ -276,6 +281,11 @@ public class AnalyzeHtml {
 
     public  void addPriceToLog(String price){
         log.append("Price : " + price + "\n");
+        lastPrice = price;
+    }
+
+    public void appendLastPriceTo(StringBuilder log){
+        log.append(LogData.LAST_PRICE + lastPrice + "\n");
     }
 
 }
