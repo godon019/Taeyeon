@@ -1,4 +1,4 @@
-package godon.ProductColumn;
+package godon.ColumnPackage;
 
 /**
  * Created by Godon on 2016-07-18.

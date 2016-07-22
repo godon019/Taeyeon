@@ -3,12 +3,12 @@ package godon.Editing;
 import godon.Analyze.AnalyzingWholeProductHtml;
 import godon.Analyze.Log.LogValuesAnalyzer;
 import godon.Analyze.LogData;
-import godon.Environment.Directories;
+import godon.Initialize.Directories;
 import godon.MainFlow.LoadFromExcel;
 import godon.MainFlow.SaveToExcel;
-import godon.ProductColumn.Column;
-import godon.ProductColumn.ColumnSetter;
-import godon.ProductColumn.Columns;
+import godon.ColumnPackage.Column;
+import godon.Initialize.ColumnSetter;
+import godon.ColumnPackage.Columns;
 import org.junit.Test;
 
 /**

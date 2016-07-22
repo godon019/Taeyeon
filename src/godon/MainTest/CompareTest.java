@@ -1,12 +1,12 @@
 package godon.MainTest;
 
-import godon.ProductColumn.ComparableColumn;
-import godon.ProductColumn.ComparedDebugColumn;
-import godon.ProductColumn.Column;
+import godon.ColumnPackage.ComparableColumn;
+import godon.ColumnPackage.ComparedDebugColumn;
+import godon.ColumnPackage.Column;
 
 import java.util.ArrayList;
 
-import static godon.ProductColumn.ComparedDebugColumn.STANDARD_ERROR_MESSEGE;
+import static godon.ColumnPackage.ComparedDebugColumn.STANDARD_ERROR_MESSEGE;
 
 /**
  * Created by Godon on 2016-07-18.

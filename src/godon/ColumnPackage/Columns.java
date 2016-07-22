@@ -1,11 +1,11 @@
-package godon.ProductColumn;
+package godon.ColumnPackage;
 
 import java.util.ArrayList;
 
 /**
  * Created by Godon on 2016-07-04.
  */
-public class Columns extends ColumnArrayFunction {
+public class Columns extends ColumnsPrimitiveFunction {
 
     public ArrayList<Column> getProductArr() {
         return columnArr;
@@ -15,17 +15,17 @@ public class Columns extends ColumnArrayFunction {
         super();
     }
 
-    public void setPrimitiveProduct(String name) {
-        int hasName = setPrimitiveProductAndGetNumbersOfIt(name);
+    public void setPrimeProduct(String name) {
+        int hasName = setPrimeColumnAndGetNumbersOfIt(name);
         try {
-            throwExceptionIfthereareNotProperPrimitiveProductNumbers(name, hasName);
+            throwExceptionIfthereareNotProperPrimeProductNumbers(name, hasName);
         }
         catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    int setPrimitiveProductAndGetNumbersOfIt(String name){
+    int setPrimeColumnAndGetNumbersOfIt(String name){
         int hasName = 0;
         for(Column column : columnArr){
             if(column.getName().equals(name)){
@@ -36,7 +36,7 @@ public class Columns extends ColumnArrayFunction {
         return hasName;
     }
 
-    void throwExceptionIfthereareNotProperPrimitiveProductNumbers(String name, int hasName) throws Exception{
+    void throwExceptionIfthereareNotProperPrimeProductNumbers(String name, int hasName) throws Exception{
         if(hasName == 0){
             throw new Exception("Primitive 를 설정할  Name : " + name + " 을 가진 Column 가 없습니다");
         }
@@ -46,13 +46,12 @@ public class Columns extends ColumnArrayFunction {
     }
 
     public void initializeNullValuesOfProductToProperValuesWithPrimeProduct() throws Exception{
-
         int sizeOfNotNullValue = 0;
-        sizeOfNotNullValue = getPrimeProduct().getValues().size();
+        sizeOfNotNullValue = getPrimeColumn().getValues().size();
         initializeProductsWithNotNullValue(sizeOfNotNullValue);
     }
 
-    Column getPrimeProduct() throws Exception{
+    Column getPrimeColumn() throws Exception{
         Column columnToReturn = null;
         int primeProductCount = 0;
         for(Column column : columnArr){
@@ -85,34 +84,6 @@ public class Columns extends ColumnArrayFunction {
     }
 
 
-    public void setColumn(String name, ArrayList<String> value){
-        for(Column column : columnArr){
-            if(column.getName().equals(name)){
-                column.setValues(value);
-                return;
-            }
-        }
-        try {
-            throw new Exception("해당 하는 이름 :" +name+" 의 set할 Product가 존재 하지 않습니다");
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
-    public Column getColumn(String name){
-        for (Column column : columnArr) {
-            if (column.getName().equals(name)) {
-                return column;
-            }
-        }
-        try {
-            throw new Exception("해당 하는 이름 :" + name + " 의 get할 Product가 존재 하지 않습니다");
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
 
 }

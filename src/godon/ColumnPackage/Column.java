@@ -1,4 +1,4 @@
-package godon.ProductColumn;
+package godon.ColumnPackage;
 
 import java.util.ArrayList;
 

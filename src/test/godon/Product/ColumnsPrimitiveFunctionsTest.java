@@ -1,8 +1,8 @@
 package godon.Product;
 
-import godon.ProductColumn.Column;
-import godon.ProductColumn.Columns;
-import godon.ProductColumn.ComparableColumn;
+import godon.ColumnPackage.Column;
+import godon.ColumnPackage.Columns;
+import godon.ColumnPackage.ComparableColumn;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by Godon on 2016-07-19.
  */
-public class ColumnArrayFunctionsTest {
+public class ColumnsPrimitiveFunctionsTest {
 
 
     @Test

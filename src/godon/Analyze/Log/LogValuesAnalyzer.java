@@ -13,7 +13,8 @@ public class LogValuesAnalyzer {
 
 
     public LogValuesAnalyzer(ArrayList<String> logValues) {
-       this.logValues = logValues;
+        this.logValues = logValues;
+        System.out.println("에러확인 " + logValues.toString());
     }
 
     public ArrayList<String> getAnalyzedValues(String name){

@@ -1,7 +1,7 @@
 package godon.MainFlow;
 
-import godon.ProductColumn.Column;
-import godon.ProductColumn.Columns;
+import godon.ColumnPackage.Column;
+import godon.ColumnPackage.Columns;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;

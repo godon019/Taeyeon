@@ -1,7 +1,7 @@
 package godon.Product;
 
-import godon.ProductColumn.Column;
-import godon.ProductColumn.ComparableColumn;
+import godon.ColumnPackage.Column;
+import godon.ColumnPackage.ComparableColumn;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

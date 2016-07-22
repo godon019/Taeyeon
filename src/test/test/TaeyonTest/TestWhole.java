@@ -1,13 +1,13 @@
 package test.TaeyonTest;
 
-import godon.Environment.Directories;
+import godon.Initialize.Directories;
 import godon.Main.LoadAnalyzeAndSave;
 import godon.MainFlow.LoadFromExcel;
 import godon.MainTest.CompareTest;
-import godon.ProductColumn.Column;
-import godon.ProductColumn.ColumnSetter;
-import godon.ProductColumn.Columns;
-import godon.ProductColumn.ComparableColumn;
+import godon.ColumnPackage.Column;
+import godon.Initialize.ColumnSetter;
+import godon.ColumnPackage.Columns;
+import godon.ColumnPackage.ComparableColumn;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
