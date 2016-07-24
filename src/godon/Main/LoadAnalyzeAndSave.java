@@ -17,7 +17,7 @@ public class LoadAnalyzeAndSave {
         ColumnSetter.setForLoading(columnsToLoad);
 
         LoadFromExcel loadFromExcel = new LoadFromExcel();
-        loadFromExcel.getColumns(columnsToLoad, Directories.samsungTest);
+        loadFromExcel.getColumns(columnsToLoad, Directories.loadDirectory);
 
         Columns columnsToSave = new Columns();
         ColumnSetter.setForDeveloperSaving(columnsToSave);
@@ -25,7 +25,7 @@ public class LoadAnalyzeAndSave {
         //Move loaded columns to to-be-saved columns
         TransferColumns.LG_Case(columnsToLoad, columnsToSave);
 
-        ColumnSetter.setLogColumn(columnsToSave, columnsToLoad.getColumn("모델명"));
+        ColumnSetter.setLogColumn(columnsToSave, columnsToLoad.getColumn("모델명"), columnsToLoad.getColumn("상품명"));
 
         SaveToExcel saveToExcel = new SaveToExcel(columnsToSave);
         saveToExcel.saveColumnsTo(Directories.saveDirectory);

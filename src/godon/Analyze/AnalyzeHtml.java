@@ -52,11 +52,16 @@ public class AnalyzeHtml {
         secondPageCase = SecondPageCase.NOT_DETERMINED_YET;
     }
 
-    StringBuilder getLog(StringBuilder log)throws Exception{
+
+
+
+    StringBuilder getLog(StringBuilder log, String wholeProductName)throws Exception{
+
 
         this.log = log;
         log.append("검색할 이름 : " + productName + "\n");
 
+        productName = removeSomeForSAMSUNG(productName, wholeProductName);
         trimNameAndUpdateLog();
 
         if(hasSearchResultFromFirstPage(productName)){
@@ -67,6 +72,31 @@ public class AnalyzeHtml {
         appendCasesTo(log);
         appendLastPriceTo(log);
         return log;
+    }
+
+    String removeSomeForSAMSUNG(String productName, String wholeProductName)throws Exception{
+        String productNameWithoutS = removeLastS(productName);
+        if(productName.contains("/B2B")){
+            log.append("B2B제거\n");
+            String productNameWithoutB2B = productName.replace("/B2B", "");
+            return productNameWithoutB2B;
+        }
+        else if(wholeProductName.contains(productNameWithoutS) && !(productName.equals(productNameWithoutS)) && !(wholeProductName.contains(productName))){
+            log.append("마지막S 제거\n");
+            return  productNameWithoutS;
+        }
+        else {
+            return  productName;
+        }
+
+        //throw new Exception("fail to remove stuff for SAMSUNG, productName : " + productName + "wholeProductName : " +wholeProductName);
+    }
+
+    public String removeLastS(String str) {
+        if (str != null && str.length() > 0 && str.charAt(str.length()-1)=='S') {
+            str = str.substring(0, str.length()-1);
+        }
+        return str;
     }
 
     void trimNameAndUpdateLog(){

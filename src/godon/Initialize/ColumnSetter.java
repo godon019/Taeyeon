@@ -61,12 +61,12 @@ public class ColumnSetter {
         columns.setPrimeProduct("모델명");
     }
 
-    static public void setLogColumn(Columns columnsToSave, Column productModelNameColumn){
+    static public void setLogColumn(Columns columnsToSave, Column productModelNameColumn, Column wholeProductNameColumn){
 
         //getLogColumn and add to column to save
         Column logColumn = new Column("로그");
         AnalyzingWholeProductHtml analyzingWholeProductHtml = new AnalyzingWholeProductHtml();
-        logColumn.setValues(analyzingWholeProductHtml.performAll(productModelNameColumn.getValues()));
+        logColumn.setValues(analyzingWholeProductHtml.performAll(productModelNameColumn.getValues(), wholeProductNameColumn.getValues()));
         columnsToSave.addColumn(logColumn);
 
         //get analyzed columns from log

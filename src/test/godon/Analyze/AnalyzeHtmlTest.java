@@ -12,7 +12,7 @@ public class AnalyzeHtmlTest {
         StringBuilder log = new StringBuilder();
         log.append("로그 갱신 전");
         try {
-            log = analyzeHtml.getLog(log);
+            log = analyzeHtml.getLog(log, "모델명만 포함 13ZD950-LX20L");
 
         } catch (Exception e) {
             e.printStackTrace();

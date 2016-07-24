@@ -31,7 +31,7 @@ public class LogValuesAnalyzerTest {
         ColumnSetter.setForSaving(columnsToSave);
 
         AnalyzingWholeProductHtml analyzingWholeProductHtml = new AnalyzingWholeProductHtml();
-        columnsToSave.setColumn("로그", analyzingWholeProductHtml.performAll(columnsToLoad.getColumn("모델명").getValues()));
+        columnsToSave.setColumn("로그", analyzingWholeProductHtml.performAll(columnsToLoad.getColumn("모델명").getValues(), columnsToLoad.getColumn("상품명").getValues()));
         columnsToSave.setColumn("모델명", columnsToLoad.getColumn("모델명").getValues());
 
         //DoTest
