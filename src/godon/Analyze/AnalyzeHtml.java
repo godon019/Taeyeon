@@ -1,5 +1,6 @@
 package godon.Analyze;
 
+import godon.Analyze.Log.AnalyzingProvider.TrimmingForLG;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -61,8 +62,8 @@ public class AnalyzeHtml {
         this.log = log;
         log.append("검색할 이름 : " + productName + "\n");
 
-        productName = removeSomeForSAMSUNG(productName, wholeProductName);
-        trimNameAndUpdateLog();
+        productName = trimNameForSamSung(productName, wholeProductName);
+        trimNameForLGAndUpdateLog(productName, this.log);
 
         if(hasSearchResultFromFirstPage(productName)){
             getInformationFromFirstPage();
@@ -74,7 +75,7 @@ public class AnalyzeHtml {
         return log;
     }
 
-    String removeSomeForSAMSUNG(String productName, String wholeProductName)throws Exception{
+    String trimNameForSamSung(String productName, String wholeProductName)throws Exception{
         String productNameWithoutS = removeLastS(productName);
         if(productName.contains("/B2B")){
             log.append("B2B제거\n");
@@ -99,10 +100,10 @@ public class AnalyzeHtml {
         return str;
     }
 
-    void trimNameAndUpdateLog(){
-        Trimming trimming = new Trimming(log);
-        productName = trimming.getTrimmedName(productName);
-        this.log = trimming.getLog();
+    void trimNameForLGAndUpdateLog(String productName, StringBuilder log){
+        TrimmingForLG trimmingForLG = new TrimmingForLG(log);
+        this.productName = trimmingForLG.getTrimmedName(productName);
+        this.log = trimmingForLG.getLog();
     }
 
 
