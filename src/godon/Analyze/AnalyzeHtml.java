@@ -1,12 +1,16 @@
 package godon.Analyze;
 
 import godon.Analyze.Log.AnalyzingProvider.TrimmingForLG;
+import godon.Analyze.Log.GoodsList;
+import godon.Analyze.Log.Link;
+import godon.Analyze.Log.PriceElement;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Godon on 2016-06-30.
@@ -56,9 +60,7 @@ public class AnalyzeHtml {
 
 
 
-    StringBuilder getLog(StringBuilder log, String productName)throws Exception{
-
-
+    public StringBuilder getLog(StringBuilder log, String productName)throws Exception{
         this.log = log;
         log.append("검색할 이름 : " + modelName + "\n");
 
@@ -72,12 +74,40 @@ public class AnalyzeHtml {
             performSecondPageIfNeeded();
         }
 
+        appendCasesTo(log);
+        appendLastPriceTo(log);
+        return log;
+    }
 
+    public StringBuilder getLog_new(StringBuilder log, String productName)throws Exception{
+        this.log = log;
+        log.append("검색할 이름 : " + modelName + "\n");
+
+        //이걸 합쳐야 하는데 쉽지가 않음
+        //modelName = new SamSungTrimmingCase(this.log, modelName, productName).getTrimmedModelName();
+
+        trimNameForLGAndUpdateLog(modelName, this.log);
+
+        Link link = new Link(log);
+        if(link.hasSearchResultFromFirstPage(modelName)){
+            doc = link.getDoc();
+            GoodsList goodsList = new GoodsList(doc);
+            ArrayList<Element> goods = goodsList.getAllGoods();
+            //use for statement to get good, compare price with original too, 쿠팡,위메프,등등 제외시키기
+            Element good = goods.get(0);
+
+            getInformationFromFirstPage_new(good);
+            performSecondPageIfNeeded();
+        }
+        else {  //redundant, should be a Exception
+            lastPrice = "검색 결과 없음";
+        }
 
         appendCasesTo(log);
         appendLastPriceTo(log);
         return log;
     }
+
 
 
     void trimNameForLGAndUpdateLog(String productName, StringBuilder log){
@@ -107,6 +137,22 @@ public class AnalyzeHtml {
             e.printStackTrace();
         }
     }
+
+    void getInformationFromFirstPage_new(Element good){
+        try {
+            PriceElement priceElement = new PriceElement(log);
+            priceElement.getFromGood(good);
+            priceHtmlText = priceElement.getPriceText();
+
+            addPriceToLog(priceHtmlText);
+            log.append(LogData.CATEGORY + getCategoryDepthElementsFromDoc("depth") + "\n");
+            getProductTitleFromDoc();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     String getPriceElementsFromDoc(String searchString) throws Exception{
         log.append("getPriceElementsFromDoc ( " + searchString + " )\n");

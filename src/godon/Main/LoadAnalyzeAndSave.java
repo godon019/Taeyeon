@@ -17,7 +17,7 @@ public class LoadAnalyzeAndSave {
         ColumnSetter.setForLoading(columnsToLoad);
 
         LoadFromExcel loadFromExcel = new LoadFromExcel();
-        loadFromExcel.getColumns(columnsToLoad, Directories.samsungTest);
+        loadFromExcel.getColumns(columnsToLoad, Directories.loadDirectory);
 
         Columns columnsToSave = new Columns();
         ColumnSetter.setForDeveloperSaving(columnsToSave);
