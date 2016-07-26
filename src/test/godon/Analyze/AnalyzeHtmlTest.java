@@ -16,7 +16,7 @@ public class AnalyzeHtmlTest {
 
         } catch (Exception e) {
             e.printStackTrace();
-            log.append("갱신 오류");
+            log.append(e.toString() + "\n 갱신 오류");
         }
         System.out.println(log.toString());
     }

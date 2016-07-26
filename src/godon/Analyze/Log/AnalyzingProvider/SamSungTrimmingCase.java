@@ -1,5 +1,11 @@
 package godon.Analyze.Log.AnalyzingProvider;
 
+import godon.Analyze.Log.AnalyzingProvider.SamSungCase.SolutionArrFactory;
+import godon.Analyze.Log.AnalyzingProvider.SamSungCase.SolutionEnum;
+import godon.Analyze.Log.AnalyzingProvider.SamSungCase.Solution;
+
+import java.util.ArrayList;
+
 /**
  * Created by Godon on 2016-07-25.
  */
@@ -8,85 +14,77 @@ public class SamSungTrimmingCase {
     String modelName;
     String productName;
 
-    SamSungTrimmingCase(StringBuilder log, String modelName, String productName){
+    public SamSungTrimmingCase(StringBuilder log, String modelName, String productName){
         this.log = log;
         this.modelName = modelName;
         this.productName = productName;
     }
 
-    String trimNameForSamSung()throws Exception{
-        String modelNumberLastSRemoved = removeLastS(modelName);
-        if(modelName.contains("/B2B")){
-            log.append("B2B제거\n");
-            String productNameWithoutB2B = modelName.replace("/B2B", "");
-            return productNameWithoutB2B;
+
+    public String getTrimmedModelName() throws Exception {
+        log.append("Do SamSung Trimming : \n");
+
+        if(assertProductNameDoesntContainModelName() && assertProductNameIsNotEmpty()) {
+            doMainTrimming();
         }
-        else if(productName.contains(modelNumberLastSRemoved) && !(modelName.equals(modelNumberLastSRemoved)) && !(productName.contains(modelName))){
-            log.append("마지막S 제거\n");
-            return  modelNumberLastSRemoved;
+        else{
+            log.append(" So nothing to do with SamSung Trimming \n");
+        }
+
+        return modelName;
+    }
+
+    private boolean assertProductNameDoesntContainModelName(){
+        if(productName.contains(modelName)){
+            log.append(" ProductName Contain ModelName \n");
+            return false;
         }
         else {
-            return modelName;
+            return true;
+        }
+    }
+
+    private boolean assertProductNameIsNotEmpty(){
+        if(productName.trim().isEmpty()){
+            log.append(" ProductName is Empty \n");
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    private void doMainTrimming()throws Exception{
+        ArrayList<Solution> caseArr = new SolutionArrFactory().getSamSumgCases(log, modelName, productName);
+        SolutionEnum resultEnum = null;
+
+        for (Solution caseOne : caseArr) {
+            modelName = caseOne.getSolvedName();
+
+            resultEnum = caseOne.getEnumAboutResult();
+            if (ifAnyOfSolutionsSuccess(resultEnum))
+                break;
         }
 
-        //throw new Exception("fail to remove stuff for SAMSUNG, productName : " + productName + "wholeProductName : " +wholeProductName);
-    }
-
-    void perform(){
-        if(isProductNameNull()==false) {
-            if (hasB2B_AsSuffix(modelName)) {
-                modelName = removeB2B(modelName);
-                return;
-            }
-
-            if (hasS_AsSuffix(modelName)) {
-                modelName = removeLastS(modelName);
-                return;
-            }
+        if (ifNoSolutionSuccess(resultEnum)) {
+            throw new Exception("Cannot get proper result of trimmed Model Name : " + modelName);
         }
-        else{
-            throwNothingToDoException();
-        }
-
     }
 
-    String removeB2B(String string){
-        log.append("B2B제거\n");
-        String productNameWithoutB2B = modelName.replace("/B2B", "");
-        return productNameWithoutB2B;
-    }
-
-    boolean isProductNameNull(){
-        return productName.trim().isEmpty();
-    }
-
-    public String removeLastS(String str) {
-        if (str != null && str.length() > 0 && str.charAt(str.length()-1)=='S') {
-            str = str.substring(0, str.length()-1);
-        }
-        return str;
-    }
-
-    public boolean hasB2B_AsSuffix(String str){
-        if( str.endsWith("/B2B"))
+    private boolean ifAnyOfSolutionsSuccess(SolutionEnum resultEnum){
+        if(resultEnum == SolutionEnum.SOLVED)
             return true;
         else
             return false;
     }
 
-    public boolean hasS_AsSuffix(String str){
-        if( str.endsWith("S") || str.endsWith("s"))
+    private boolean ifNoSolutionSuccess(SolutionEnum resultEnum){
+        if((resultEnum != SolutionEnum.SOLVED) || (resultEnum == null))
             return true;
         else
             return false;
+
     }
 
-    public boolean hasSAsSuffixExclusively(String productName, String modelNumberLastSRemoved){
-        if(productName.contains(modelNumberLastSRemoved) && !(modelName.equals(modelNumberLastSRemoved)) && !(productName.contains(modelName))){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
+
 }

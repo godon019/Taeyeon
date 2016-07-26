@@ -26,7 +26,7 @@ public class AnalyzeHtml {
 
     StringBuilder log;
 
-    String productName;
+    String modelName;
 
     String lastPrice;
 
@@ -47,8 +47,8 @@ public class AnalyzeHtml {
     AnalyzeHtml.SecondPageCase secondPageCase;
 
 
-    public AnalyzeHtml(String productName){
-        this.productName = productName;
+    public AnalyzeHtml(String modelName){
+        this.modelName = modelName;
         firstPageCase = FirstPageCase.NOT_DETERMINED_YET;
         secondPageCase = SecondPageCase.NOT_DETERMINED_YET;
     }
@@ -56,53 +56,33 @@ public class AnalyzeHtml {
 
 
 
-    StringBuilder getLog(StringBuilder log, String wholeProductName)throws Exception{
+    StringBuilder getLog(StringBuilder log, String productName)throws Exception{
 
 
         this.log = log;
-        log.append("검색할 이름 : " + productName + "\n");
+        log.append("검색할 이름 : " + modelName + "\n");
 
-        productName = trimNameForSamSung(productName, wholeProductName);
-        trimNameForLGAndUpdateLog(productName, this.log);
+        //이걸 합쳐야 하는데 쉽지가 않음
+        //modelName = new SamSungTrimmingCase(this.log, modelName, productName).getTrimmedModelName();
 
-        if(hasSearchResultFromFirstPage(productName)){
+        trimNameForLGAndUpdateLog(modelName, this.log);
+
+        if(hasSearchResultFromFirstPage(modelName)){
             getInformationFromFirstPage();
             performSecondPageIfNeeded();
         }
+
+
 
         appendCasesTo(log);
         appendLastPriceTo(log);
         return log;
     }
 
-    String trimNameForSamSung(String productName, String wholeProductName)throws Exception{
-        String productNameWithoutS = removeLastS(productName);
-        if(productName.contains("/B2B")){
-            log.append("B2B제거\n");
-            String productNameWithoutB2B = productName.replace("/B2B", "");
-            return productNameWithoutB2B;
-        }
-        else if(wholeProductName.contains(productNameWithoutS) && !(productName.equals(productNameWithoutS)) && !(wholeProductName.contains(productName))){
-            log.append("마지막S 제거\n");
-            return  productNameWithoutS;
-        }
-        else {
-            return  productName;
-        }
-
-        //throw new Exception("fail to remove stuff for SAMSUNG, productName : " + productName + "wholeProductName : " +wholeProductName);
-    }
-
-    public String removeLastS(String str) {
-        if (str != null && str.length() > 0 && str.charAt(str.length()-1)=='S') {
-            str = str.substring(0, str.length()-1);
-        }
-        return str;
-    }
 
     void trimNameForLGAndUpdateLog(String productName, StringBuilder log){
         TrimmingForLG trimmingForLG = new TrimmingForLG(log);
-        this.productName = trimmingForLG.getTrimmedName(productName);
+        this.modelName = trimmingForLG.getTrimmedName(productName);
         this.log = trimmingForLG.getLog();
     }
 

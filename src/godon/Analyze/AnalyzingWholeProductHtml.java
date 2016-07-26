@@ -15,7 +15,7 @@ public class AnalyzingWholeProductHtml {
 
         } catch (Exception e) {
             e.printStackTrace();
-            log.append("갱신 오류");
+            log.append(e.toString() + " \n갱신 오류");
         }
 
 
