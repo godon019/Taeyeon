@@ -1,4 +1,7 @@
-package godon.Analyze.Log;
+package godon.Analyze.MallStuff;
+
+import godon.Analyze.MallStuff.MallException.NoGoodMallExistException;
+import godon.Analyze.MallStuff.MallListTypeStuff.Mall;
 
 import java.util.ArrayList;
 
@@ -23,14 +26,14 @@ public class MallInspector {
         badMalls.add(badMall);
     }
 
-    public Mall getGoodMallFromTop()throws Exception{
+    public Mall getGoodMallFromTop()throws NoGoodMallExistException{
         String goodMall;
         for(Mall mall : malls){
             if(isGoodMall(mall))
                 return mall;
         }
 
-        throw new Exception("There are no good malls");
+        throw new NoGoodMallExistException("There are no good malls");
     }
 
     public boolean isGoodMall(Mall mall){

@@ -1,5 +1,7 @@
 package godon.Analyze.Log;
 
+import godon.Analyze.MallStuff.MallListTypeStuff.Mall;
+import godon.Analyze.MallStuff.MallListProvider;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -9,24 +11,24 @@ import java.util.ArrayList;
  */
 public class MallListProviderTest {
     @Test
-    public void getAllMalls() throws Exception {
-        MallListProvider mallListProvider = new MallListProvider(Link.getDocFromLink("http://shopping.naver.com/search/all.nhn?query=10T360-B830K&cat_id=&frm=NVSHATC"));
+    public void mallCaseModel() throws Exception {
+        GoodsList goodsList = new GoodsList(Link.getDocFromLink("http://shopping.naver.com/search/all.nhn?query=10T360-B83BK&cat_id=&frm=NVSHATC"));
 
-        ArrayList<Mall> malls = mallListProvider.getAllMalls();
-        for(Mall mall : malls){
-            System.out.println("mall : " +mall.element.text());
-        }
+        MallListProvider mallListProvider = new MallListProvider(goodsList.getProductLists().get(0), new StringBuilder());
+
+        ArrayList<Mall> malls = mallListProvider.getMallList();
+
+        System.out.println(mallListProvider.log.toString());
     }
 
     @Test
-    public void getMallList() throws Exception {
-        MallListProvider mallListProvider = new MallListProvider(Link.getDocFromLink("http://shopping.naver.com/search/all.nhn?query=10T550-B83BK&cat_id=&frm=NVSHATC"));
-        try {
-            System.out.println("malls : " + mallListProvider.getMallList().text());
-        }
-        catch (Exception e){
-            System.out.println("Error : " + e.getMessage());
-        }
+    public void mallCaseProduct() throws Exception {
+        GoodsList goodsList = new GoodsList(Link.getDocFromLink("http://shopping.naver.com/search/all.nhn?query=13ZD950-LX20L&cat_id=&frm=NVSHATC"));
+        MallListProvider mallListProvider = new MallListProvider(goodsList.getProductLists().get(0), new StringBuilder());
+
+        ArrayList<Mall> malls = mallListProvider.getMallList();
+
+        System.out.println(mallListProvider.log.toString());
 
     }
 

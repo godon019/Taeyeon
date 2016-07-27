@@ -11,7 +11,7 @@ public class AnalyzingWholeProductHtml {
         StringBuilder log = new StringBuilder();
         log.append("로그 갱신 전");
         try {
-            log = analyzeHtml.getLog(log, wholeProductName);
+            log = analyzeHtml.getLog_new(log, wholeProductName);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,6 +4,11 @@ import godon.Analyze.Log.AnalyzingProvider.TrimmingForLG;
 import godon.Analyze.Log.GoodsList;
 import godon.Analyze.Log.Link;
 import godon.Analyze.Log.PriceElement;
+import godon.Analyze.MallStuff.MallException.NoGoodMallExistException;
+import godon.Analyze.MallStuff.MallException.NoMallTypeExistException;
+import godon.Analyze.MallStuff.MallInspector;
+import godon.Analyze.MallStuff.MallListProvider;
+import godon.Analyze.MallStuff.MallListTypeStuff.Mall;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,6 +43,7 @@ public class AnalyzeHtml {
         NOT_DETERMINED_YET,
         NORMAL_PRICE,
         PRICE_HAS_WAVE_CHARACTER,
+        PRICE_HAS_WAVE_CHARACTER_WITH_SLUSH,
         TO_SECOND_PAGE;
     }
     AnalyzeHtml.FirstPageCase firstPageCase;
@@ -82,6 +88,7 @@ public class AnalyzeHtml {
     public StringBuilder getLog_new(StringBuilder log, String productName)throws Exception{
         this.log = log;
         log.append("검색할 이름 : " + modelName + "\n");
+        System.out.println("검색할 이름 : "+ modelName + "\n");
 
         //이걸 합쳐야 하는데 쉽지가 않음
         //modelName = new SamSungTrimmingCase(this.log, modelName, productName).getTrimmedModelName();
@@ -93,11 +100,16 @@ public class AnalyzeHtml {
             doc = link.getDoc();
             GoodsList goodsList = new GoodsList(doc);
             ArrayList<Element> goods = goodsList.getAllGoods();
-            //use for statement to get good, compare price with original too, 쿠팡,위메프,등등 제외시키기
-            Element good = goods.get(0);
 
-            getInformationFromFirstPage_new(good);
-            performSecondPageIfNeeded();
+            //use for statement to get good, compare price with original too
+            for(Element good : goods) {
+               if (isGoodMall(good)) {  //should compare price too
+                   getInformationFromFirstPage_new(good);
+                   performSecondPageIfNeeded();
+                   break;
+                }
+            }
+
         }
         else {  //redundant, should be a Exception
             lastPrice = "검색 결과 없음";
@@ -126,6 +138,22 @@ public class AnalyzeHtml {
         return true;
     }
 
+
+
+    boolean isGoodMall(Element good)throws NoMallTypeExistException{
+        //get mall information
+        MallListProvider mallListProvider = new MallListProvider(good, log);
+        MallInspector mallInspector = new MallInspector(mallListProvider.getMallList());
+        try {
+            Mall mall =  mallInspector.getGoodMallFromTop();
+        } catch (NoGoodMallExistException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
     void getInformationFromFirstPage(){
         try {
             priceHtmlText = getPriceElementsFromDoc("price");
@@ -139,12 +167,15 @@ public class AnalyzeHtml {
     }
 
     void getInformationFromFirstPage_new(Element good){
+
         try {
             PriceElement priceElement = new PriceElement(log);
             priceElement.getFromGood(good);
             priceHtmlText = priceElement.getPriceText();
-
             addPriceToLog(priceHtmlText);
+
+            //priceElements =
+
             log.append(LogData.CATEGORY + getCategoryDepthElementsFromDoc("depth") + "\n");
             getProductTitleFromDoc();
         }
@@ -271,7 +302,7 @@ public class AnalyzeHtml {
             log.append("case 1 : 이름에 ~ 있는 경우 그리고 가격비교도 있는경우 ~제외하고 앞쪽 가격으로 최종가격 결정\n");
             String [] priceOfWhole = priceHtmlText.split(" ~ ");
             addPriceToLog(priceOfWhole[0]);
-            firstPageCase = FirstPageCase.PRICE_HAS_WAVE_CHARACTER;
+            firstPageCase = FirstPageCase.PRICE_HAS_WAVE_CHARACTER_WITH_SLUSH;
             secondPageCase = SecondPageCase.NOT_SECOND_CASE;
         }
         else if(priceHtmlText.contains("가격비교")){

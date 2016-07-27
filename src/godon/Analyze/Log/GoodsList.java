@@ -22,8 +22,6 @@ public class GoodsList {
 
     }
 
-
-
     public ArrayList<Element> getAllGoods(){
         Elements elements = getProductLists();
         for(Element element : elements){
