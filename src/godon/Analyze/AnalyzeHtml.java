@@ -3,12 +3,13 @@ package godon.Analyze;
 import godon.Analyze.Log.AnalyzingProvider.TrimmingForLG;
 import godon.Analyze.Log.GoodsList;
 import godon.Analyze.Log.Link;
-import godon.Analyze.Log.PriceElement;
+import godon.Analyze.Log.PriceElementClass;
 import godon.Analyze.MallStuff.MallException.NoGoodMallExistException;
 import godon.Analyze.MallStuff.MallException.NoMallTypeExistException;
 import godon.Analyze.MallStuff.MallInspector;
 import godon.Analyze.MallStuff.MallListProvider;
 import godon.Analyze.MallStuff.MallListTypeStuff.Mall;
+import godon.Util.lg;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 public class AnalyzeHtml {
 
     Document doc;
-    Elements priceElements;
+    Element priceElement;
     Element element;
 
     String href;
@@ -103,11 +104,19 @@ public class AnalyzeHtml {
 
             //use for statement to get good, compare price with original too
             for(Element good : goods) {
-               if (isGoodMall(good)) {  //should compare price too
-                   getInformationFromFirstPage_new(good);
-                   performSecondPageIfNeeded();
-                   break;
+                try {  //should compare price too
+                    assertGoodMall(good);
+                    getInformationFromFirstPage_new(good);
+                    new Category(log).getFrom(good);
+                    performSecondPageIfNeeded();
+                    break;
                 }
+                catch (NoGoodMallExistException e){
+                    log.append("============================================================\n");
+                    lg.debug(log, e.getMessage());
+                    continue;
+                }
+
             }
 
         }
@@ -119,6 +128,8 @@ public class AnalyzeHtml {
         appendLastPriceTo(log);
         return log;
     }
+
+
 
 
 
@@ -140,18 +151,11 @@ public class AnalyzeHtml {
 
 
 
-    boolean isGoodMall(Element good)throws NoMallTypeExistException{
+    void assertGoodMall(Element good)throws NoMallTypeExistException, NoGoodMallExistException{
         //get mall information
         MallListProvider mallListProvider = new MallListProvider(good, log);
         MallInspector mallInspector = new MallInspector(mallListProvider.getMallList());
-        try {
-            Mall mall =  mallInspector.getGoodMallFromTop();
-        } catch (NoGoodMallExistException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
-
-        return true;
+        Mall mall =  mallInspector.getGoodMallFromTop();
     }
 
     void getInformationFromFirstPage(){
@@ -169,14 +173,12 @@ public class AnalyzeHtml {
     void getInformationFromFirstPage_new(Element good){
 
         try {
-            PriceElement priceElement = new PriceElement(log);
-            priceElement.getFromGood(good);
-            priceHtmlText = priceElement.getPriceText();
+            PriceElementClass priceElementClass = new PriceElementClass(log);
+            priceElementClass.getFromGood(good);
+            priceHtmlText = priceElementClass.getPriceText();
             addPriceToLog(priceHtmlText);
+            priceElement = priceElementClass.price;
 
-            //priceElements =
-
-            log.append(LogData.CATEGORY + getCategoryDepthElementsFromDoc("depth") + "\n");
             getProductTitleFromDoc();
         }
         catch (Exception e){
@@ -188,8 +190,8 @@ public class AnalyzeHtml {
     String getPriceElementsFromDoc(String searchString) throws Exception{
         log.append("getPriceElementsFromDoc ( " + searchString + " )\n");
 
-        priceElements = doc.getElementsByClass(searchString);
-        String text = priceElements.first().text();
+        priceElement = doc.getElementsByClass(searchString).first();
+        String text = priceElement.text();
         System.out.println("element : "+ text);
         return text;
     }
@@ -250,7 +252,6 @@ public class AnalyzeHtml {
     }
 
     void performSecondPageIfNeeded()throws Exception{
-
         if(analyzePriceName()==FirstPageCase.TO_SECOND_PAGE){
             performSecondPage();
         }
@@ -340,9 +341,8 @@ public class AnalyzeHtml {
 
 
     void analyzeCompareButtonElements(){
-        System.out.println("priceElements : " + priceElements.first().toString());
-        //element = priceElements.first().getElementsByTag("a").first();
-        element = priceElements.select("a.btn_compare").first();
+        System.out.println("priceElement : " + priceElement.toString());
+        element = priceElement.select("a.btn_compare").first();
 
         System.out.println("a tag element : " + element.toString());
 

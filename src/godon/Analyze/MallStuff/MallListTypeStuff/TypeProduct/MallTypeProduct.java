@@ -1,5 +1,6 @@
-package godon.Analyze.MallStuff.MallListTypeStuff;
+package godon.Analyze.MallStuff.MallListTypeStuff.TypeProduct;
 
+import godon.Analyze.MallStuff.MallListTypeStuff.Mall;
 import org.jsoup.nodes.Element;
 
 /**

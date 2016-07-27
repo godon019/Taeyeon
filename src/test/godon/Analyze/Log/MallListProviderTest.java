@@ -23,7 +23,7 @@ public class MallListProviderTest {
 
     @Test
     public void mallCaseProduct() throws Exception {
-        GoodsList goodsList = new GoodsList(Link.getDocFromLink("http://shopping.naver.com/search/all.nhn?query=13ZD950-LX20L&cat_id=&frm=NVSHATC"));
+        GoodsList goodsList = new GoodsList(Link.getDocFromLink("http://shopping.naver.com/search/all.nhn?query=24MT47DC&cat_id=&frm=NVSHATC"));
         MallListProvider mallListProvider = new MallListProvider(goodsList.getProductLists().get(0), new StringBuilder());
 
         ArrayList<Mall> malls = mallListProvider.getMallList();

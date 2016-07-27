@@ -6,12 +6,12 @@ import org.jsoup.nodes.Element;
 /**
  * Created by Godon on 2016-07-27.
  */
-public class PriceElement {
+public class PriceElementClass {
 
     StringBuilder log = new StringBuilder();
-    Element price;
+    public Element price;
 
-    public PriceElement(StringBuilder log){
+    public PriceElementClass(StringBuilder log){
         this.log = log;
     }
 

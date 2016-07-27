@@ -1,5 +1,8 @@
 package godon.Analyze;
 
+import godon.Analyze.MallStuff.MallListTypeStuff.TypeModel.MallListByTypeModel;
+import godon.Util.lg;
+
 import java.util.ArrayList;
 
 /**
@@ -13,11 +16,15 @@ public class AnalyzingWholeProductHtml {
         try {
             log = analyzeHtml.getLog_new(log, wholeProductName);
 
+        } catch (MallListByTypeModel.UnknownResultOfMallListFromModelType e){
+            log.append("=======================Critical Error======================\n");
+            lg.debug(log, e.getMessage());
+
         } catch (Exception e) {
             e.printStackTrace();
             log.append(e.toString() + " \n갱신 오류");
+            System.out.println("오류 로그 출력 : \n"+log.toString());
         }
-
 
 
         return log.toString();

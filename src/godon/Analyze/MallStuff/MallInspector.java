@@ -15,11 +15,13 @@ public class MallInspector {
 
     public MallInspector(ArrayList<Mall> malls){
         this.malls = malls;
+        setBadMalls();
+    }
 
-
-        addBadMall("위메프");
-        addBadMall("쿠팡");
-        addBadMall("티몬");
+    private void setBadMalls(){
+        BadMallList badMallList = new BadMallList();
+        ArrayList<String> badMallStrList = badMallList.getBadMalls();
+        badMallStrList.forEach(this::addBadMall);
     }
 
     public void addBadMall(String badMall){
@@ -27,13 +29,12 @@ public class MallInspector {
     }
 
     public Mall getGoodMallFromTop()throws NoGoodMallExistException{
-        String goodMall;
         for(Mall mall : malls){
             if(isGoodMall(mall))
                 return mall;
         }
 
-        throw new NoGoodMallExistException("There are no good malls");
+        throw new NoGoodMallExistException();
     }
 
     public boolean isGoodMall(Mall mall){

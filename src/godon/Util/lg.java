@@ -13,4 +13,10 @@ public class lg {
         stringBuilder.append( "METHOD : " + currentStack.getMethodName() +" : \n");
         return stringBuilder.toString();
     }
+
+    public static void debug(StringBuilder log, String str){
+        str = str+"\n";
+        System.out.println(str);
+        log.append(str);
+    }
 }

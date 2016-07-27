@@ -6,6 +6,7 @@ import godon.Analyze.MallStuff.MallException.NoMallTypeExistException;
  * Created by Godon on 2016-07-27.
  */
 public enum MallTypeEnum {
+    EXCEPTION("exception"),
     MODEL("_model_list"),
     PRODUCT("_product_list");
 

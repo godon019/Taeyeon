@@ -15,3 +15,5 @@ public class Mall {
         return new StringBuilder().append("\nname : " + name + " / price : " + price + " / element : " + element.text()).toString()+" ";
     }
 }
+
+
