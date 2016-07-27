@@ -30,7 +30,7 @@ public class Link {
     }
 
 
-    private Document getDocFromLink(String link){
+    static public Document getDocFromLink(String link){
         Document document = null;
         try {
             document = Jsoup.connect(link).get();
