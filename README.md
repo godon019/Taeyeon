@@ -1,6 +1,7 @@
 # Taeyeon
 ## summary
 Extract specific data from excel and updates them based on internet search result
+- written with Java and Run on Windows
 
 ## details
 - Read and Write data between Excel sheet and this Windows Java Application
