@@ -1,5 +1,5 @@
 # Taeyeon
-# Tech
+## Tech
 Java, REST API, Web page analysis(DOM traversing), read/write excel files
 
 ## Summary
